@@ -1,6 +1,6 @@
 {
   "name": "physics-module-ammonext",
-  "version": "0.0.2-0",
+  "version": "0.0.1-dev.1",
   "description": "physics module for Whitestorm.js",
   "main": "index.js",
   "scripts": {
@@ -18,6 +18,24 @@
   "homepage": "https://github.com/WhitestormJS/physics-module-ammonext#readme",
   "devDependencies": {
     "babel": "^6.5.2",
-    "webpack": "^1.14.0"
+    "babel-core": "^6.20.0",
+    "babel-loader": "^6.2.9",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-1": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "del": "^2.2.2",
+    "webpack": "^2.1.0-beta.28",
+    "webpack-dev-middleware": "^1.8.4",
+    "worker-loader": "^0.7.1"
+  },
+  "dependencies": {
+    "ammonext": "0.0.3"
   }
 }

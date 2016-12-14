@@ -7,7 +7,6 @@ import {
   Vector3
 } from 'three';
 
-import Stats from 'stats.js';
 import {Vehicle} from '../vehicle/vehicle';
 import {Eventable} from '../eventable';
 
@@ -134,17 +133,17 @@ export class Scene extends SceneNative {
     Object.assign(this, new Eventable());
     Eventable.make(Scene);
 
-    this._stats = init.stats ? new Stats() : false;
+    // this._stats = init.stats ? new Stats() : false;
     this._world = init.world || false;
 
-    if (this._stats) {
-      this._stats.setMode(0);
-      this._stats.domElement.style.position = 'absolute';
-      this._stats.domElement.style.left = '0px';
-      this._stats.domElement.style.top = '48px';
+    // if (this._stats) {
+    //   this._stats.setMode(0);
+    //   this._stats.domElement.style.position = 'absolute';
+    //   this._stats.domElement.style.left = '0px';
+    //   this._stats.domElement.style.top = '48px';
 
-      this._world.$element.appendChild(this._stats.domElement);
-    }
+    //   this._world.$element.appendChild(this._stats.domElement);
+    // }
   }
 
   _updateScene(data) {

@@ -1,12 +1,11 @@
 import { Scene as PhysicsWorld } from '../core/scene';
 import { Vector3 } from 'three';
 
-export function create() {
+export function createWorld() {
   const scene = new PhysicsWorld(
     {
       fixedTimeStep: this.params.physics.fixedTimeStep,
-      broadphase: this.params.physics.broadphase,
-      ammo: this.params.physics.ammo
+      broadphase: this.params.physics.broadphase
     },
     {
       stats: this.params.stats,
@@ -26,4 +25,9 @@ export function create() {
   scene.simulate();
 
   return scene;
+}
+
+export const $world = (target) => {
+  target.defaults.physics.create = createWorld;
+  return target;
 }

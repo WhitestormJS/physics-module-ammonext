@@ -1,5 +1,4 @@
 import Ammo from 'ammonext';
-import {extend} from '../utils/index';
 
 const transferableMessage = self.webkitPostMessage || self.postMessage,
 
@@ -350,7 +349,8 @@ public_functions.init = (params = {}) => {
   let broadphase;
 
   if (!params.broadphase) params.broadphase = {type: 'dynamic'};
-  if (params.broadphase.type === 'sweepprune') {
+  // TODO!!!
+  /* if (params.broadphase.type === 'sweepprune') {
     extend(params.broadphase, {
       aabbmin: {
         x: -50,
@@ -364,7 +364,7 @@ public_functions.init = (params = {}) => {
         z: 50
       },
     });
-  }
+  }*/
 
   switch (params.broadphase.type) {
     case 'sweepprune':
