@@ -1,0 +1,23 @@
+{
+  "name": "physics-module-ammonext",
+  "version": "0.0.2-0",
+  "description": "physics module for Whitestorm.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WhitestormJS/physics-module-ammonext.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WhitestormJS/physics-module-ammonext/issues"
+  },
+  "homepage": "https://github.com/WhitestormJS/physics-module-ammonext#readme",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "webpack": "^1.14.0"
+  }
+}
