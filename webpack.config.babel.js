@@ -68,11 +68,9 @@ export default {
         minimize: true,
         exclude: 'physicsWorker.js'
       }),
-      new webpack.NormalModuleReplacementPlugin(/inline\-worker/, 'webworkify-webpack'),
       new webpack.BannerPlugin(bannerText)
     ]
     : [
-      new webpack.NormalModuleReplacementPlugin(/inline\-worker/, 'webworkify-webpack'),
       new webpack.BannerPlugin(bannerText)
     ],
   devServer: {

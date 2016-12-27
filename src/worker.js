@@ -1,4 +1,4 @@
-import Ammo from 'ammonext';
+const Ammo = require('ammonext');
 
 const transferableMessage = self.webkitPostMessage || self.postMessage,
 
@@ -312,6 +312,7 @@ const createSoftBody = (description) => {
 };
 
 public_functions.init = (params = {}) => {
+  
   _transform = new Ammo.btTransform();
   _transform_pos = new Ammo.btTransform();
   _vec3_1 = new Ammo.btVector3(0, 0, 0);

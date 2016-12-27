@@ -21,13 +21,11 @@ import {
   CONSTRAINTREPORT_ITEMSIZE
 } from '../api';
 
-const Worker = require('worker-loader?inline!../worker.js');
-
 export class Scene extends SceneNative {
   constructor(params = {}, init = {}) {
     super();
 
-    this._worker = new Worker();
+    this._worker = new (require('worker-loader?inline!../worker.js'))();
     this._worker.transferableMessage = this._worker.webkitPostMessage || this._worker.postMessage;
 
     params.fixedTimeStep = params.fixedTimeStep || 1 / 60;
@@ -37,6 +35,7 @@ export class Scene extends SceneNative {
       softbody: init.softbody
     };
 
+    console.log('preyes');
     this.execute('init', params);
 
     this._materials_ref_counts = {};

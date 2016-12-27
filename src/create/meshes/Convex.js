@@ -7,3 +7,12 @@ export function CONVEX(params, material) {
     params
   );
 }
+
+export function CONVEX2(params, material, geometry, geometry2) {
+  return new (params.softbody ? SoftMesh : ConvexMesh)(
+    geometry,
+    material,
+    params,
+    geometry2
+  );
+}

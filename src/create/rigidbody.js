@@ -106,6 +106,10 @@ function RigidbodyComponent(targetComponent) {
       return this;
     }
 
+    clone() {
+      return new resultComponent({build: false}).copy(this);
+    }
+
     get position() {
       return this.native.position;
     }
