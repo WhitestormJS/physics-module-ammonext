@@ -1,4 +1,4 @@
-const Ammo = require('ammonext');
+// const Ammo = require('ammonext');
 
 const transferableMessage = self.webkitPostMessage || self.postMessage,
 
@@ -312,6 +312,7 @@ const createSoftBody = (description) => {
 };
 
 public_functions.init = (params = {}) => {
+  importScripts(params.ammo);
   
   _transform = new Ammo.btTransform();
   _transform_pos = new Ammo.btTransform();

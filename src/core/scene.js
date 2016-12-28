@@ -30,6 +30,7 @@ export class Scene extends SceneNative {
 
     params.fixedTimeStep = params.fixedTimeStep || 1 / 60;
     params.rateLimit = params.rateLimit || true;
+    params.ammo = params.ammo || "";
 
     params.whs = {
       softbody: init.softbody

@@ -5,7 +5,8 @@ export function createWorld() {
   const scene = new PhysicsWorld(
     {
       fixedTimeStep: this.params.physics.fixedTimeStep,
-      broadphase: this.params.physics.broadphase
+      broadphase: this.params.physics.broadphase,
+      ammo: this.params.physics.ammo
     },
     {
       stats: this.params.stats,

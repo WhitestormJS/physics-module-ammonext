@@ -19,7 +19,7 @@ console.log(_version);
 const bannerText = `Physics module "Ammonext" v${_version}`;
 
 export default {
-  devtool: isProduction ? false : 'source-map',
+  devtool: isProduction ? false : 'hidden-source-map',
   cache: true,
   entry: [
     './src/index.js'
@@ -44,11 +44,9 @@ export default {
         ],
         loader: 'babel-loader',
         query: {
-          // cacheDirectory: true,
+          cacheDirectory: true,
           plugins: [
             ['transform-runtime', {polyfill: false}],
-            'add-module-exports',
-            'transform-decorators-legacy',
             'transform-class-properties',
             'transform-object-rest-spread'
           ],
