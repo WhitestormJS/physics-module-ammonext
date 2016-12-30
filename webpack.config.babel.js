@@ -32,7 +32,8 @@ export default {
     libraryTarget: 'umd'
   },
   externals: {
-    three: 'THREE'
+    three: 'THREE',
+    whs: 'WHS'
   },
   module: {
     rules: [

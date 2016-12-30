@@ -342,7 +342,7 @@ public_functions.init = (params = {}) => {
   vehiclereport[0] = MESSAGE_TYPES.VEHICLEREPORT;
   constraintreport[0] = MESSAGE_TYPES.CONSTRAINTREPORT;
 
-  const collisionConfiguration = params.whs.softbody
+  const collisionConfiguration = params.softbody
     ? new Ammo.btSoftBodyRigidBodyCollisionConfiguration()
     : new Ammo.btDefaultCollisionConfiguration(),
     dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration),
@@ -390,12 +390,12 @@ public_functions.init = (params = {}) => {
       break;
   }
 
-  world = params.whs.softbody
+  world = params.softbody
     ? new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, new Ammo.btDefaultSoftBodySolver())
     : new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
   fixedTimeStep = params.fixedTimeStep;
 
-  if (params.whs.softbody) _softbody_enabled = true;
+  if (params.softbody) _softbody_enabled = true;
 
   transferableMessage({cmd: 'worldReady'});
 };
@@ -408,6 +408,7 @@ public_functions.setGravity = (description) => {
   _vec3_1.setX(description.x);
   _vec3_1.setY(description.y);
   _vec3_1.setZ(description.z);
+  console.log(description);
   world.setGravity(_vec3_1);
 };
 
