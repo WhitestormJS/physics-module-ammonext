@@ -428,28 +428,27 @@ public_functions.addObject = (description) => {
   if (description.type.indexOf('soft') !== -1) {
     body = createSoftBody(description);
 
-    const sbConfig = body.get_m_cfg(),
-      physParams = description.params;
+    const sbConfig = body.get_m_cfg();
 
-    if (physParams.viterations) sbConfig.set_viterations(physParams.viterations);
-    if (physParams.piterations) sbConfig.set_piterations(physParams.piterations);
-    if (physParams.diterations) sbConfig.set_diterations(physParams.diterations);
-    if (physParams.citerations) sbConfig.set_citerations(physParams.citerations);
+    if (description.viterations) sbConfig.set_viterations(description.viterations);
+    if (description.piterations) sbConfig.set_piterations(description.piterations);
+    if (description.diterations) sbConfig.set_diterations(description.diterations);
+    if (description.citerations) sbConfig.set_citerations(description.citerations);
     sbConfig.set_collisions(0x11);
-    sbConfig.set_kDF(physParams.friction);
-    sbConfig.set_kDP(physParams.damping);
-    if (physParams.pressure) sbConfig.set_kPR(physParams.pressure);
-    if (physParams.drag) sbConfig.set_kDG(physParams.drag);
-    if (physParams.lift) sbConfig.set_kLF(physParams.lift);
-    if (physParams.anchorHardness) sbConfig.set_kAHR(physParams.anchorHardness);
-    if (physParams.rigidHardness) sbConfig.set_kCHR(physParams.rigidHardness);
+    sbConfig.set_kDF(description.friction);
+    sbConfig.set_kDP(description.damping);
+    if (description.pressure) sbConfig.set_kPR(description.pressure);
+    if (description.drag) sbConfig.set_kDG(description.drag);
+    if (description.lift) sbConfig.set_kLF(description.lift);
+    if (description.anchorHardness) sbConfig.set_kAHR(description.anchorHardness);
+    if (description.rigidHardness) sbConfig.set_kCHR(description.rigidHardness);
 
-    if (physParams.klst) body.get_m_materials().at(0).set_m_kLST(physParams.klst);
-    if (physParams.kast) body.get_m_materials().at(0).set_m_kAST(physParams.kast);
-    if (physParams.kvst) body.get_m_materials().at(0).set_m_kVST(physParams.kvst);
+    if (description.klst) body.get_m_materials().at(0).set_m_kLST(description.klst);
+    if (description.kast) body.get_m_materials().at(0).set_m_kAST(description.kast);
+    if (description.kvst) body.get_m_materials().at(0).set_m_kVST(description.kvst);
 
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(physParams.margin ? physParams.margin : 0.1);
-    body.setActivationState(physParams.state || 4);
+    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(description.margin ? description.margin : 0.1);
+    body.setActivationState(description.state || 4);
     body.type = 0; // SoftBody.
     if (description.type === 'softRopeMesh') body.rope = true;
 
@@ -473,7 +472,6 @@ public_functions.addObject = (description) => {
     _softbody_report_size += body.get_m_nodes().size();
     _num_softbody_objects++;
   } else {
-    const physParams = description.params;
     let shape = createShape(description);
 
     if (!shape) return;
@@ -530,14 +528,14 @@ public_functions.addObject = (description) => {
     motionState = new Ammo.btDefaultMotionState(_transform); // #TODO: btDefaultMotionState supports center of mass offset as second argument - implement
     const rbInfo = new Ammo.btRigidBodyConstructionInfo(description.mass, motionState, shape, _vec3_1);
 
-    rbInfo.set_m_friction(physParams.friction);
-    rbInfo.set_m_restitution(physParams.restitution);
-    rbInfo.set_m_linearDamping(physParams.damping);
-    rbInfo.set_m_angularDamping(physParams.damping);
+    rbInfo.set_m_friction(description.friction);
+    rbInfo.set_m_restitution(description.restitution);
+    rbInfo.set_m_linearDamping(description.damping);
+    rbInfo.set_m_angularDamping(description.damping);
 
     body = new Ammo.btRigidBody(rbInfo);
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(physParams.margin ? physParams.margin : 0);
-    body.setActivationState(physParams.state || 4);
+    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(description.margin ? description.margin : 0);
+    body.setActivationState(description.state || 4);
     Ammo.destroy(rbInfo);
 
     if (typeof description.collision_flags !== 'undefined') body.setCollisionFlags(description.collision_flags);

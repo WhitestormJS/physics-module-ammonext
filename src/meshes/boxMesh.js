@@ -15,19 +15,16 @@ export class BoxModule {
   integrate(params) {
     this._physijs = {
       type: 'box',
-      mass: params.mass || 0,
+      mass: params.mass,
       touches: [],
       linearVelocity: new Vector3(),
       angularVelocity: new Vector3(),
       group: params.group,
       mask: params.mask,
-      params: {
-        friction: params.friction,
-        restitution: params.restitution,
-        damping: params.damping,
-        margin: params.margin,
-        mass: params.mass
-      }
+      friction: params.friction,
+      restitution: params.restitution,
+      damping: params.damping,
+      margin: params.margin
     };
 
     wrapPhysicsPrototype(this);
@@ -36,7 +33,6 @@ export class BoxModule {
   bridge = {
     geometry(geometry) {
       if (!geometry.boundingBox) geometry.computeBoundingBox();
-      console.log(this);
 
       this._physijs.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
       this._physijs.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;

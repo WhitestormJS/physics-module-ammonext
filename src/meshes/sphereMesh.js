@@ -19,19 +19,16 @@ export class SphereModule {
   integrate(params) {
     this._physijs = {
       type: 'sphere',
-      mass: params.mass || 0,
       touches: [],
       linearVelocity: new Vector3(),
       angularVelocity: new Vector3(),
       group: params.group,
       mask: params.mask,
-      params: {
-        friction: params.friction,
-        restitution: params.restitution,
-        damping: params.damping,
-        margin: params.margin,
-        mass: params.mass
-      }
+      friction: params.friction,
+      restitution: params.restitution,
+      damping: params.damping,
+      margin: params.margin,
+      mass: params.mass
     };
 
     wrapPhysicsPrototype(this);
