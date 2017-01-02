@@ -1,4 +1,4 @@
-import {Vector3} from 'three';
+import {Vector3, BufferGeometry} from 'three';
 import {wrapPhysicsPrototype} from './physicsPrototype';
 
 export class ConvexModule {
@@ -31,27 +31,22 @@ export class ConvexModule {
   }
 
   bridge = {
-    geometry(geometry) {
+    mesh(mesh) {
+      const geometry = mesh.geometry;
+
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
       const isBuffer = geometry.type === 'BufferGeometry';
 
+      if (!isBuffer) geometry._bufferGeometry = new BufferGeometry().fromGeometry(geometry);
+
       const data = isBuffer ?
         geometry.attributes.position.array :
-        new Float32Array(geometry.vertices.length * 3);
-
-      if(!isBuffer) {
-        for (let i = 0; i < geometry.vertices.length; i++) {
-          data[i * 3] = geometry.vertices[i].x;
-          data[i * 3 + 1] = geometry.vertices[i].y;
-          data[i * 3 + 2] = geometry.vertices[i].z;
-        }
-      }
+        geometry._bufferGeometry.attributes.position.array;
 
       this._physijs.data = data;
 
       return geometry;
     }
   }
-
 }
