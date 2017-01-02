@@ -1,6 +1,6 @@
 export * from './BoxModule';
 export * from './CapsuleModule';
-export * from './concaveMesh';
+export * from './ConcaveModule';
 export * from './coneMesh';
 export * from './ConvexModule';
 export * from './cylinderMesh';

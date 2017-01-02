@@ -40,6 +40,8 @@ export class ConvexModule {
 
       if (!isBuffer) geometry._bufferGeometry = new BufferGeometry().fromGeometry(geometry);
 
+      console.log(geometry._bufferGeometry);
+
       const data = isBuffer ?
         geometry.attributes.position.array :
         geometry._bufferGeometry.attributes.position.array;
