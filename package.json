@@ -4,7 +4,8 @@
   "description": "physics module for Whitestorm.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp dev --port 8001"
   },
   "repository": {
     "type": "git",
