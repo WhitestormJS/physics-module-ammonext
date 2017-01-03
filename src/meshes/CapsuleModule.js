@@ -6,6 +6,7 @@ export class CapsuleModule {
     this.params = Object.assign({
       mass: 10,
       height: 3,
+      scale: new Vector3(1, 1, 1),
       radius: 3,
       restitution: 0.3,
       friction: 0.8,
@@ -23,6 +24,7 @@ export class CapsuleModule {
       restitution: params.restitution,
       damping: params.damping,
       margin: params.margin,
+      scale: params.scale,
       mass: params.mass
     };
 

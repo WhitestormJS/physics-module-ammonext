@@ -507,6 +507,12 @@ public_functions.addObject = (description) => {
       _compound_shapes[description.id] = shape;
     }
 
+    _vec3_1.setX(description.scale.x);
+    _vec3_1.setY(description.scale.y);
+    _vec3_1.setZ(description.scale.z);
+
+    shape.setLocalScaling(_vec3_1);
+
     _vec3_1.setX(0);
     _vec3_1.setY(0);
     _vec3_1.setZ(0);

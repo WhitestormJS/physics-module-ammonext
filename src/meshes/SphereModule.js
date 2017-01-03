@@ -12,7 +12,8 @@ export class SphereModule {
       margin: 0,
       klst: 0.9,
       kvst: 0.9,
-      kast: 0.9
+      kast: 0.9,
+      scale: new Vector3(1, 1, 1)
     }, params);
   }
 
@@ -28,6 +29,7 @@ export class SphereModule {
       restitution: params.restitution,
       damping: params.damping,
       margin: params.margin,
+      scale: params.scale,
       mass: params.mass
     };
 

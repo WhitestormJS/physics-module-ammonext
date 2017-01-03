@@ -5,6 +5,7 @@ export class BoxModule {
   constructor(params) {
     this.params = Object.assign({
       mass: 10,
+      scale: new Vector3(1, 1, 1),
       restitution: 0.3,
       friction: 0.8,
       damping: 0,
@@ -24,6 +25,7 @@ export class BoxModule {
       friction: params.friction,
       restitution: params.restitution,
       damping: params.damping,
+      scale: params.scale,
       margin: params.margin
     };
 

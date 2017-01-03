@@ -7,7 +7,8 @@ export class PlaneModule {
       restitution: 0.3,
       friction: 0.8,
       damping: 0,
-      margin: 0
+      margin: 0,
+      scale: new Vector3(1, 1, 1)
     }, params);
   }
 
@@ -23,6 +24,7 @@ export class PlaneModule {
       restitution: params.restitution,
       damping: params.damping,
       margin: params.margin,
+      scale: params.scale,
       mass: params.mass
     };
   }
