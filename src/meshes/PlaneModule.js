@@ -1,4 +1,5 @@
 import {Vector3} from 'three';
+import {wrapPhysicsPrototype} from './physicsPrototype';
 
 export class PlaneModule {
   constructor(params) {
@@ -27,6 +28,8 @@ export class PlaneModule {
       scale: params.scale,
       mass: params.mass
     };
+
+    wrapPhysicsPrototype(this);
   }
 
   bridge = {

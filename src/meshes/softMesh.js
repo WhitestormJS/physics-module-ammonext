@@ -1,67 +1,18 @@
-import {Mesh} from '../core/mesh';
+import {Vector3} from 'three';
+import {wrapPhysicsPrototype} from './physicsPrototype';
 
-export class SoftMesh extends Mesh {
-  constructor(geometry, material, params = {}) {
-    const physParams = params.physics;
-    const mass = physParams.mass || params.mass;
-    const tempGeometry = geometry.clone();
-
-    if (!(geometry instanceof THREE.BufferGeometry)) // Converts to BufferGeometry.
-      geometry = new THREE.BufferGeometry().fromGeometry(geometry);
-
-    super(geometry, material, mass, physParams);
-
-    // console.log(tempGeometry.mergeVertices);
-    tempGeometry.mergeVertices();
-    const idxGeometry = this.createIndexedBufferGeometryFromGeometry(tempGeometry);
-    this.tempGeometry = tempGeometry;
-
-    const aVertices = idxGeometry.attributes.position.array;
-    const aIndices = idxGeometry.index.array;
-    const aIdxAssoc = [];
-    const vertices = geometry.attributes.position.array;
-
-    const numIdxVertices = aVertices.length / 3;
-    const numVertices = vertices.length / 3;
-
-    for (let i = 0; i < numIdxVertices; i++) {
-      const association = [];
-      aIdxAssoc.push(association);
-
-      const i3 = i * 3;
-
-      for (let j = 0; j < numVertices; j++) {
-        const j3 = j * 3;
-
-        if (this.isEqual(aVertices[i3], aVertices[i3 + 1], aVertices[i3 + 2], vertices[j3], vertices[j3 + 1], vertices[j3 + 2]))
-          association.push(j3);
-      }
-    }
-
-    this._physijs.type = 'softTrimesh';
-    this._physijs.aVertices = aVertices;
-    this._physijs.aIndices = aIndices;
-    this._physijs.aIdxAssoc = aIdxAssoc;
-
-    this._physijs.params = {
-      friction: physParams.friction,
-      damping: physParams.damping,
-      pressure: physParams.pressure,
-      margin: physParams.margin,
-      klst: physParams.klst,
-      kast: physParams.kast,
-      kvst: physParams.kvst,
-      drag: physParams.drag,
-      lift: physParams.lift,
-      piterations: physParams.piterations,
-      viterations: physParams.viterations,
-      diterations: physParams.diterations,
-      citerations: physParams.citerations,
-      anchorHardness: physParams.anchorHardness,
-      rigidHardness: physParams.rigidHardness
-    };
-
-    this._physijs.mass = mass;
+export class SoftbodyModule{
+  constructor(params) {
+    this.params = Object.assign({
+      restitution: 0.3,
+      friction: 0.8,
+      damping: 0,
+      pressure: 100,
+      margin: 0,
+      klst: 0.9,
+      kvst: 0.9,
+      kast: 0.9,
+    }, params);
   }
 
   createIndexedBufferGeometryFromGeometry(geometry) {
@@ -114,5 +65,75 @@ export class SoftMesh extends Mesh {
       influence,
       collisionBetweenLinkedBodies
     });
+  }
+
+  integrate(params) {
+    this._physijs = {
+      type: 'softTrimesh',
+      aVertices: params.aVertices,
+      aIndices: params.aIndices,
+      aIdxAssoc: params.aIdxAssoc,
+      mass: params.mass,
+      friction: params.friction,
+      damping: params.damping,
+      pressure: params.pressure,
+      margin: params.margin,
+      klst: params.klst,
+      kast: params.kast,
+      kvst: params.kvst,
+      drag: params.drag,
+      lift: params.lift,
+      piterations: params.piterations,
+      viterations: params.viterations,
+      diterations: params.diterations,
+      citerations: params.citerations,
+      anchorHardness: params.anchorHardness,
+      rigidHardness: params.rigidHardness
+    };
+
+    wrapPhysicsPrototype(this);
+  }
+
+  bridge = {
+    geometry(geometry) {
+      if (!(geometry instanceof THREE.BufferGeometry)) // Converts to BufferGeometry.
+        geometry = new THREE.BufferGeometry().fromGeometry(geometry);
+
+      // console.log(tempGeometry.mergeVertices);
+      tempGeometry.mergeVertices();
+      const idxGeometry = this.createIndexedBufferGeometryFromGeometry(tempGeometry);
+      this.tempGeometry = tempGeometry;
+
+      const aVertices = idxGeometry.attributes.position.array;
+      const aIndices = idxGeometry.index.array;
+      const aIdxAssoc = [];
+      const vertices = geometry.attributes.position.array;
+
+      const numIdxVertices = aVertices.length / 3;
+      const numVertices = vertices.length / 3;
+
+      for (let i = 0; i < numIdxVertices; i++) {
+        const association = [];
+        aIdxAssoc.push(association);
+
+        const i3 = i * 3;
+
+        for (let j = 0; j < numVertices; j++) {
+          const j3 = j * 3;
+
+          if (this.isEqual(aVertices[i3], aVertices[i3 + 1], aVertices[i3 + 2], vertices[j3], vertices[j3 + 1], vertices[j3 + 2]))
+            association.push(j3);
+        }
+      }
+
+
+      if (!geometry.boundingBox) geometry.computeBoundingBox();
+
+      this._physijs.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      this._physijs.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      this._physijs.normal = geometry.faces[0].normal.clone();
+
+      return geometry;
+    }
   }
 }
