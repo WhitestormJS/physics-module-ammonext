@@ -7,6 +7,6 @@ export * from './cylinderMesh';
 export * from './heightfieldMesh';
 export * from './PlaneModule';
 export * from './SphereModule';
-export * from './softMesh';
+export * from './SoftbodyModule';
 export * from './clothMesh';
 export * from './ropeMesh';

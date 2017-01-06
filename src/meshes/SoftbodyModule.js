@@ -12,6 +12,12 @@ export class SoftbodyModule{
       klst: 0.9,
       kvst: 0.9,
       kast: 0.9,
+      piterations: 1,
+      viterations: 0,
+      diterations: 0,
+      citerations: 4,
+      anchorHardness: 0.7,
+      rigidHardness: 1
     }, params);
   }
 
@@ -113,7 +119,7 @@ export class SoftbodyModule{
 
           bufferGeometry.setIndex(
             new BufferAttribute(
-              new Uint16Array(geometry.faces.length * 3), 
+              new (geometry.faces.length * 3 > 65535 ? Uint32Array : Uint16Array)(geometry.faces.length * 3),
               1
             ).copyIndicesArray(geometry.faces)
           );
