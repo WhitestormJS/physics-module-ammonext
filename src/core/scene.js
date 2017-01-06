@@ -32,17 +32,13 @@ export class WorldModule extends Eventable {
       rateLimit: true,
       ammo: "",
       softbody: false,
-      gravity: {
-        x: 0,
-        y: -100,
-        z: 0
-      }
+      gravity: new Vector3(0, -100, 0)
     }, params);
 
     this._worker = new (require('worker-loader?inline!../worker.js'))();
     this._worker.transferableMessage = this._worker.webkitPostMessage || this._worker.postMessage;
 
-    this.execute('init', params);
+    this.execute('init', this.params);
 
     this._materials_ref_counts = {};
     this._objects = {};
@@ -197,51 +193,76 @@ export class WorldModule extends Eventable {
     while (index--) {
       const size = data[offset + 1];
       const object = this._objects[data[offset]];
+      const _physijs = object.component._physijs;
 
       if (object === null) continue;
 
-      const association = object._physijs.aIdxAssoc;
       const attributes = object.geometry.attributes;
-
       const volumePositions = attributes.position.array;
 
       const offsetVert = offset + 2;
 
-      if (object._physijs.type === "softTrimesh") {
+      if (_physijs.type === "softTrimesh") {
+        object.position.set(0, 0, 0);
         const volumeNormals = attributes.normal.array;
 
         for (let i = 0; i < size; i++) {
-          const offs = offsetVert + i * 6;
+          const offs = offsetVert + i * 18;
 
-          const x = data[offs];
-          const y = data[offs + 1];
-          const z = data[offs + 2];
+          const x1 = data[offs];
+          const y1 = data[offs + 1];
+          const z1 = data[offs + 2];
 
-          const nx = data[offs + 3];
-          const ny = data[offs + 4];
-          const nz = data[offs + 5];
+          const nx1 = data[offs + 3];
+          const ny1 = data[offs + 4];
+          const nz1 = data[offs + 5];
 
-          const assocVertex = association[i];
+          const x2 = data[offs + 6];
+          const y2 = data[offs + 7];
+          const z2 = data[offs + 8];
 
-          for (let k = 0, kl = assocVertex.length; k < kl; k++) {
-            let indexVertex = assocVertex[k];
+          const nx2 = data[offs + 9];
+          const ny2 = data[offs + 10];
+          const nz2 = data[offs + 11];
 
-            volumePositions[indexVertex] = x;
-            volumeNormals[indexVertex] = nx;
-            indexVertex++;
+          const x3 = data[offs + 12];
+          const y3 = data[offs + 13];
+          const z3 = data[offs + 14];
 
-            volumePositions[indexVertex] = y;
-            volumeNormals[indexVertex] = ny;
-            indexVertex++;
+          const nx3 = data[offs + 15];
+          const ny3 = data[offs + 16];
+          const nz3 = data[offs + 17];
 
-            volumePositions[indexVertex] = z;
-            volumeNormals[indexVertex] = nz;
-          }
+          const i9 = i * 9;
+
+          volumePositions[i9] = x1;
+          volumePositions[i9 + 1] = y1;
+          volumePositions[i9 + 2] = z1;
+
+          volumePositions[i9 + 3] = x2;
+          volumePositions[i9 + 4] = y2;
+          volumePositions[i9 + 5] = z2;
+
+          volumePositions[i9 + 6] = x3;
+          volumePositions[i9 + 7] = y3;
+          volumePositions[i9 + 8] = z3;
+
+          volumeNormals[i9] = nx1;
+          volumeNormals[i9 + 1] = ny1;
+          volumeNormals[i9 + 2] = nz1;
+
+          volumeNormals[i9 + 3] = nx2;
+          volumeNormals[i9 + 4] = ny2;
+          volumeNormals[i9 + 5] = nz2;
+
+          volumeNormals[i9 + 6] = nx3;
+          volumeNormals[i9 + 7] = ny3;
+          volumeNormals[i9 + 8] = nz3;
         }
 
         attributes.normal.needsUpdate = true;
       }
-      else if (object._physijs.type === "softRopeMesh") {
+      else if (_physijs.type === "softRopeMesh") {
         for (let i = 0; i < size; i++) {
           const offs = offsetVert + i * 3;
 
@@ -281,7 +302,7 @@ export class WorldModule extends Eventable {
 
       attributes.position.needsUpdate = true;
 
-      offset += 2 + size * 6;
+      offset += 2 + size * 18;
     }
 
     // if (this.SUPPORT_TRANSFERABLE)

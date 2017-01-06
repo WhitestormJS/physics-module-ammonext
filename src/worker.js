@@ -1386,16 +1386,22 @@ const reportWorld_softbodies = () => {
       const object = _objects[index];
 
       if (object && object.type === 0) { // SoftBodies.
-        const size = object.get_m_nodes().size();
+
+        // console.log(object.get_m_faces().at(0).get_m_n(0));
+        // console.log(object.get_m_faces().at(0).get_m_n(1));
+        // console.log(object.get_m_faces().at(0).get_m_n(2));
 
         softreport[offset] = object.id;
-        softreport[offset + 1] = size; // Vertices ammount.
 
         const offsetVert = offset + 2;
 
         if (object.rope === true) {
+          const nodes = object.get_m_nodes();
+          const size = nodes.size();
+          softreport[offset + 1] = size;
+
           for (let i = 0; i < size; i++) {
-            const node = object.get_m_nodes().at(i);
+            const node = nodes.at(i);
             const vert = node.get_m_x();
             const off = offsetVert + i * 3;
 
@@ -1403,25 +1409,58 @@ const reportWorld_softbodies = () => {
             softreport[off + 1] = vert.y();
             softreport[off + 2] = vert.z();
           }
+
+          offset += size * 6 + 2;
         }
         else {
+          const faces = object.get_m_faces();
+          const size = faces.size();
+          softreport[offset + 1] = size;
+
           for (let i = 0; i < size; i++) {
-            const node = object.get_m_nodes().at(i);
-            const vert = node.get_m_x();
-            const normal = node.get_m_n();
-            const off = offsetVert + i * 6;
+            const face = faces.at(i);
 
-            softreport[off] = vert.x();
-            softreport[off + 1] = vert.y();
-            softreport[off + 2] = vert.z();
+            const node1 = face.get_m_n(0);
+            const node2 = face.get_m_n(1);
+            const node3 = face.get_m_n(2);
 
-            softreport[off + 3] = normal.x();
-            softreport[off + 4] = normal.y();
-            softreport[off + 5] = normal.z();
+            const vert1 = node1.get_m_x();
+            const vert2 = node2.get_m_x();
+            const vert3 = node3.get_m_x();
+
+            const normal1 = node1.get_m_n();
+            const normal2 = node2.get_m_n();
+            const normal3 = node3.get_m_n();
+
+            const off = offsetVert + i * 18;
+
+            softreport[off] = vert1.x();
+            softreport[off + 1] = vert1.y();
+            softreport[off + 2] = vert1.z();
+
+            softreport[off + 3] = normal1.x();
+            softreport[off + 4] = normal1.y();
+            softreport[off + 5] = normal1.z();
+
+            softreport[off + 6] = vert2.x();
+            softreport[off + 7] = vert2.y();
+            softreport[off + 8] = vert2.z();
+
+            softreport[off + 9] = normal2.x();
+            softreport[off + 10] = normal2.y();
+            softreport[off + 11] = normal2.z();
+
+            softreport[off + 12] = vert3.x();
+            softreport[off + 13] = vert3.y();
+            softreport[off + 14] = vert3.z();
+
+            softreport[off + 15] = normal3.x();
+            softreport[off + 16] = normal3.y();
+            softreport[off + 17] = normal3.z();
           }
-        }
 
-        offset += size * 6 + 2;
+          offset += size * 18 + 2;
+        }
       }
     }
   }
