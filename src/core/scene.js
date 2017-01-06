@@ -143,8 +143,6 @@ export class WorldModule extends Eventable {
 
       if (object === null) continue;
 
-      // console.log(data[offset + 2]);
-
       if (component.__dirtyPosition === false) {
         object.position.set(
           data[offset + 1],

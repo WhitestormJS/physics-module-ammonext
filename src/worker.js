@@ -263,12 +263,14 @@ const createSoftBody = (description) => {
     case 'softTrimesh': {
       if (!description.aVertices.length) return false;
 
+      console.log(description.aIndices.length / 3);
+
       body = softBodyHelpers.CreateFromTriMesh(
         world.getWorldInfo(),
         description.aVertices,
         description.aIndices,
         description.aIndices.length / 3,
-        true
+        false
       );
 
       break;
@@ -408,7 +410,6 @@ public_functions.setGravity = (description) => {
   _vec3_1.setX(description.x);
   _vec3_1.setY(description.y);
   _vec3_1.setZ(description.z);
-  console.log(description);
   world.setGravity(_vec3_1);
 };
 
@@ -469,7 +470,9 @@ public_functions.addObject = (description) => {
 
     body.setTotalMass(description.mass, false);
     world.addSoftBody(body, 1, -1);
-    _softbody_report_size += body.get_m_nodes().size();
+    if (description.type === 'softTrimesh') _softbody_report_size += body.get_m_faces().size() * 3;
+    else _softbody_report_size += body.get_m_nodes().size() * 3;
+
     _num_softbody_objects++;
   } else {
     let shape = createShape(description);
@@ -1386,10 +1389,6 @@ const reportWorld_softbodies = () => {
       const object = _objects[index];
 
       if (object && object.type === 0) { // SoftBodies.
-
-        // console.log(object.get_m_faces().at(0).get_m_n(0));
-        // console.log(object.get_m_faces().at(0).get_m_n(1));
-        // console.log(object.get_m_faces().at(0).get_m_n(2));
 
         softreport[offset] = object.id;
 
