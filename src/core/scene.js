@@ -548,23 +548,23 @@ export class WorldModule extends Eventable {
   }
 
   bridge = {
-    onAdd(component, shared) {
+    onAdd(component, self) {
       const object = component.native;
       // this.add(object);
       const _physijs = object._physijs || object.component._physijs;
       
       if (_physijs) {
         object.world = this.$scene;
-        _physijs.id = shared.getObjectId();
+        _physijs.id = self.getObjectId();
 
         if (object instanceof Vehicle) {
           this.add(object.mesh);
-          shared._vehicles[_physijs.id] = object;
-          shared.execute('addVehicle', _physijs);
+          self._vehicles[_physijs.id] = object;
+          self.execute('addVehicle', _physijs);
         } else {
           component.__dirtyPosition = false;
           component.__dirtyRotation = false;
-          shared._objects[_physijs.id] = object;
+          self._objects[_physijs.id] = object;
 
           if (object.children.length) {
             _physijs.children = [];
@@ -572,12 +572,12 @@ export class WorldModule extends Eventable {
           }
 
           if (object.material._physijs) {
-            if (shared._materials_ref_counts.hasOwnProperty(object.material._physijs.id))
-              shared._materials_ref_counts[object.material._physijs.id]++;
+            if (self._materials_ref_counts.hasOwnProperty(object.material._physijs.id))
+              self._materials_ref_counts[object.material._physijs.id]++;
             else {
-              shared.execute('registerMaterial', object.material._physijs);
+              self.execute('registerMaterial', object.material._physijs);
               _physijs.materialId = object.material._physijs.id;
-              shared._materials_ref_counts[object.material._physijs.id] = 1;
+              self._materials_ref_counts[object.material._physijs.id] = 1;
             }
           }
 
@@ -602,7 +602,7 @@ export class WorldModule extends Eventable {
           if (_physijs.height) _physijs.height *= object.scale.y;
           if (_physijs.depth) _physijs.depth *= object.scale.z;
 
-          shared.execute('addObject', _physijs);
+          self.execute('addObject', _physijs);
         }
       }
     },
