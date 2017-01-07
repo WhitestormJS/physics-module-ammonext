@@ -1,5 +1,5 @@
 import {Vector3} from 'three';
-import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
 
 export class SphereModule {
   constructor(params) {
@@ -43,6 +43,7 @@ export class SphereModule {
       return geometry;
     },
 
-    onCopy
+    onCopy,
+    onWrap
   }
 }

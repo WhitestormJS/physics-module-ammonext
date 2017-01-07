@@ -1,5 +1,5 @@
 import {Vector3, MultiMaterial, Mesh, JSONLoader} from 'three';
-import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
 
 export class ConcaveModule {
   constructor(params) {
@@ -100,6 +100,7 @@ export class ConcaveModule {
       return geometry;
     },
 
-    onCopy
+    onCopy,
+    onWrap
   }
 }

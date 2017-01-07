@@ -1,5 +1,5 @@
 import {Vector3, BufferGeometry} from 'three';
-import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
 
 export class ConvexModule {
   constructor(params) {
@@ -51,6 +51,7 @@ export class ConvexModule {
       return mesh;
     },
 
-    onCopy
+    onCopy,
+    onWrap
   }
 }

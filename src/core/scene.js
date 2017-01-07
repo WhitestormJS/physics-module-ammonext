@@ -657,9 +657,10 @@ export class WorldModule extends Eventable {
 
         const object = shared._objects[object_id];
         const component = object.component;
+        const _physijs = component._physijs;
 
         if (object !== null && (component.__dirtyPosition || component.__dirtyRotation)) {
-          const update = {id: object._physijs.id};
+          const update = {id: _physijs.id};
 
           if (component.__dirtyPosition) {
             update.pos = {
@@ -668,7 +669,7 @@ export class WorldModule extends Eventable {
               z: object.position.z
             };
 
-            if (object._physijs.type === 'softbody') object.position.set(0, 0, 0);
+            if (_physijs.type === 'softbody') object.position.set(0, 0, 0);
 
             component.__dirtyPosition = false;
           }
@@ -681,7 +682,7 @@ export class WorldModule extends Eventable {
               w: object.quaternion.w
             };
 
-            if (object._physijs.type === 'softbody') object.rotation.set(0, 0, 0);
+            if (_physijs.type === 'softbody') object.rotation.set(0, 0, 0);
 
             component.__dirtyRotation = false;
           }
