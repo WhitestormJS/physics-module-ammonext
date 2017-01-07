@@ -554,7 +554,7 @@ export class WorldModule extends Eventable {
       const _physijs = object._physijs || object.component._physijs;
       
       if (_physijs) {
-        object.world = this.$scene;
+        component.worldModule = self;
         _physijs.id = self.getObjectId();
 
         if (object instanceof Vehicle) {

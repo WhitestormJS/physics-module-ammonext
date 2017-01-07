@@ -1,5 +1,5 @@
 import {Vector3} from 'three';
-import {wrapPhysicsPrototype} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
 
 export class SphereModule {
   constructor(params) {
@@ -41,6 +41,8 @@ export class SphereModule {
       if (!geometry.boundingSphere) geometry.computeBoundingSphere();
       this._physijs.radius = geometry.boundingSphere.radius;
       return geometry;
-    }
+    },
+
+    onCopy
   }
 }

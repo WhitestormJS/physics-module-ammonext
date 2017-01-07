@@ -1,5 +1,5 @@
 import {Vector3, BufferGeometry, BufferAttribute} from 'three';
-import {wrapPhysicsPrototype} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
 
 export class SoftbodyModule{
   constructor(params) {
@@ -142,6 +142,8 @@ export class SoftbodyModule{
       console.log(ndxGeometry.attributes.position.array.length);
 
       return ndxGeometry;
-    }
+    },
+
+    onCopy
   }
 }

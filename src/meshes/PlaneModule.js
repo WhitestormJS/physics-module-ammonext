@@ -1,5 +1,5 @@
 import {Vector3} from 'three';
-import {wrapPhysicsPrototype} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
 
 export class PlaneModule {
   constructor(params) {
@@ -41,7 +41,9 @@ export class PlaneModule {
       this._physijs.normal = geometry.faces[0].normal.clone();
 
       return geometry;
-    }
+    },
+
+    onCopy
   }
 }
 

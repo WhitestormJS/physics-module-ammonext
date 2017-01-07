@@ -1,5 +1,5 @@
 import {Vector3} from 'three';
-import {wrapPhysicsPrototype} from './physicsPrototype';
+import {wrapPhysicsPrototype, onCopy} from './physicsPrototype';
 
 export class BoxModule {
   constructor(params) {
@@ -41,6 +41,8 @@ export class BoxModule {
       this._physijs.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
 
       return geometry;
-    }
-  }
+    },
+
+    onCopy
+  };
 }
