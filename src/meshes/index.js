@@ -8,5 +8,5 @@ export * from './heightfieldMesh';
 export * from './PlaneModule';
 export * from './SphereModule';
 export * from './SoftbodyModule';
-export * from './clothMesh';
+export * from './ClothModule';
 export * from './ropeMesh';

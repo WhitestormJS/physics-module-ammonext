@@ -263,8 +263,6 @@ const createSoftBody = (description) => {
     case 'softTrimesh': {
       if (!description.aVertices.length) return false;
 
-      console.log(description.aIndices.length / 3);
-
       body = softBodyHelpers.CreateFromTriMesh(
         world.getWorldInfo(),
         description.aVertices,
@@ -452,6 +450,7 @@ public_functions.addObject = (description) => {
     body.setActivationState(description.state || 4);
     body.type = 0; // SoftBody.
     if (description.type === 'softRopeMesh') body.rope = true;
+    if (description.type === 'softClothMesh') body.cloth = true;
 
     _transform.setIdentity();
 
@@ -696,7 +695,7 @@ public_functions.updateTransform = (details) => {
     _object.setWorldTransform(_transform);
     _object.activate();
   } else if (_object.type === 0) {
-    _object.getWorldTransform(_transform);
+    // _object.getWorldTransform(_transform);
 
     if (details.pos) {
       _vec3_1.setX(details.pos.x);
@@ -1407,6 +1406,28 @@ const reportWorld_softbodies = () => {
             softreport[off] = vert.x();
             softreport[off + 1] = vert.y();
             softreport[off + 2] = vert.z();
+          }
+
+          offset += size * 6 + 2;
+        }
+        else if (object.cloth) {
+          const nodes = object.get_m_nodes();
+          const size = nodes.size();
+          softreport[offset + 1] = size;
+
+          for (let i = 0; i < size; i++) {
+            const node = nodes.at(i);
+            const vert = node.get_m_x();
+            const normal = node.get_m_n();
+            const off = offsetVert + i * 6;
+
+            softreport[off] = vert.x();
+            softreport[off + 1] = vert.y();
+            softreport[off + 2] = vert.z();
+
+            softreport[off + 3] = normal.x();
+            softreport[off + 4] = normal.y();
+            softreport[off + 5] = normal.z();
           }
 
           offset += size * 6 + 2;
