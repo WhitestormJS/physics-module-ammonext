@@ -34,8 +34,6 @@ export class ConcaveModule {
       geometry.attributes.position.array :
       new Float32Array(geometry.faces.length * 9);
 
-    console.log(geometry.vertices.length);
-
     if (!isBuffer) {
       const vertices = geometry.vertices;
 

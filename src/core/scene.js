@@ -185,6 +185,7 @@ export class WorldModule extends Eventable {
   }
 
   _updateSoftbodies(data) {
+
     let index = data[1],
       offset = 2;
 
@@ -201,7 +202,6 @@ export class WorldModule extends Eventable {
       const offsetVert = offset + 2;
 
       if (_physijs.type === "softTrimesh") {
-        object.position.set(0, 0, 0);
         const volumeNormals = attributes.normal.array;
 
         for (let i = 0; i < size; i++) {
@@ -595,6 +595,11 @@ export class WorldModule extends Eventable {
             w: object.quaternion.w
           };
 
+          if (_physijs.isSoftbody) {
+            object.position.set(0, 0, 0);
+            object.quaternion.set(0, 0, 0, 1);
+          }
+
           // Check for scaling
           // var mass_scaling = new Vector3(1, 1, 1);
 
@@ -669,7 +674,7 @@ export class WorldModule extends Eventable {
               z: object.position.z
             };
 
-            if (_physijs.type === 'softbody') object.position.set(0, 0, 0);
+            if (_physijs.isSoftbody) object.position.set(0, 0, 0);
 
             component.__dirtyPosition = false;
           }
@@ -682,7 +687,7 @@ export class WorldModule extends Eventable {
               w: object.quaternion.w
             };
 
-            if (_physijs.type === 'softbody') object.rotation.set(0, 0, 0);
+            if (_physijs.isSoftbody) object.rotation.set(0, 0, 0);
 
             component.__dirtyRotation = false;
           }

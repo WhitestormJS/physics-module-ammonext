@@ -83,6 +83,7 @@ export class SoftbodyModule{
       pressure: params.pressure,
       margin: params.margin,
       klst: params.klst,
+      isSoftbody: true,
       kast: params.kast,
       kvst: params.kvst,
       drag: params.drag,
@@ -105,8 +106,6 @@ export class SoftbodyModule{
         : (() => {
           geometry.mergeVertices();
 
-          // console.log(geometry.faces.length);
-
           const bufferGeometry = new BufferGeometry();
 
           bufferGeometry.addAttribute(
@@ -124,12 +123,8 @@ export class SoftbodyModule{
             ).copyIndicesArray(geometry.faces)
           );
 
-          // console.log(bufferGeometry.attributes.position.array.length / 3);
-
           return bufferGeometry;
         })();
-
-      // console.log(idxGeometry.index.array.length);
 
       const aVertices = idxGeometry.attributes.position.array;
       const aIndices = idxGeometry.index.array;
