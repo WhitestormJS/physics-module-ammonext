@@ -31,5 +31,9 @@ gulp.task('dev', () => {
     res.sendFile(path.resolve(__dirname, './vendor/ammo.js'));
   });
 
+  server.get('/vendor/ammo.wasm', (req, res) => {
+    res.sendFile(path.resolve(__dirname, './vendor/ammo.wasm'));
+  });
+
   server.listen(argv.port || 8001, 'localhost', () => {});
 });
