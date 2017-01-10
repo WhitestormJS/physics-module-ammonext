@@ -19,7 +19,7 @@ console.log(_version);
 const bannerText = `Physics module "Ammonext" v${_version}`;
 
 export default {
-  devtool: isProduction ? false : 'hidden-source-map',
+  devtool: isProduction ? false : 'source-map',
   cache: true,
   entry: [
     './src/index.js'
