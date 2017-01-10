@@ -312,8 +312,20 @@ const createSoftBody = (description) => {
 };
 
 public_functions.init = (params = {}) => {
-  importScripts(params.ammo);
-  
+  if (params.wasmBuffer) {
+    importScripts(params.ammo);
+
+    self.Ammo = loadAmmoFromBinary(params.wasmBuffer);
+    transferableMessage({cmd: 'ammoLoaded'});
+    public_functions.makeWorld(params);
+  } else {
+    importScripts(params.ammo);
+    transferableMessage({cmd: 'ammoLoaded'});
+    public_functions.makeWorld(params);
+  }
+}
+
+public_functions.makeWorld = (params = {}) => {
   _transform = new Ammo.btTransform();
   _transform_pos = new Ammo.btTransform();
   _vec3_1 = new Ammo.btVector3(0, 0, 0);
