@@ -1,3 +1,4 @@
+export * from './WorldModule';
 export * from './BoxModule';
 export * from './CapsuleModule';
 export * from './ConcaveModule';
