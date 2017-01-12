@@ -134,8 +134,6 @@ export class SoftbodyModule{
 
       const ndxGeometry = new BufferGeometry().fromGeometry(geometry);
 
-      console.log(ndxGeometry.attributes.position.array.length);
-
       return ndxGeometry;
     },
 

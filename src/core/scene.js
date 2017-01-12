@@ -315,6 +315,7 @@ export class WorldModule extends Eventable {
           volumePositions[i * 3 + 1] = y;
           volumePositions[i * 3 + 2] = z;
 
+          // FIXME: Normals are pointed to look inside;
           volumeNormals[i * 3] = nx;
           volumeNormals[i * 3 + 1] = ny;
           volumeNormals[i * 3 + 2] = nz;

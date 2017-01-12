@@ -78,11 +78,31 @@ export class ClothModule {
             ).copyVector3sArray(geometry.vertices)
           );
 
+          const faces = geometry.faces, facesLength = faces.length;
+          const normalsArray = new Float32Array(facesLength * 3);
+
+          for (let i = 0; i < facesLength; i++) {
+            const i3 = i * 3;
+            const normal = faces[i].normal || new Vector3();
+
+            normalsArray[i3] = normal.x;
+            normalsArray[i3 + 1] = normal.y;
+            normalsArray[i3 + 2] = normal.z;
+          }
+
+          bufferGeometry.addAttribute(
+            'normal',
+            new BufferAttribute(
+              normalsArray,
+              3
+            )
+          );
+
           bufferGeometry.setIndex(
             new BufferAttribute(
-              new (geometry.faces.length * 3 > 65535 ? Uint32Array : Uint16Array)(geometry.faces.length * 3),
+              new (facesLength * 3 > 65535 ? Uint32Array : Uint16Array)(facesLength * 3),
               1
-            ).copyIndicesArray(geometry.faces)
+            ).copyIndicesArray(faces)
           );
 
           return bufferGeometry;
