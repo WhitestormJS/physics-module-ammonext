@@ -681,10 +681,12 @@ export class WorldModule extends Eventable {
 
   bridge = {
     onAdd(component, self) {
-      return self.defer(self.onAddCallback.bind(self), [component]);
+      if (component._physijs) return self.defer(self.onAddCallback.bind(self), [component]);
+      return;
     },
     onRemove(component, self) {
-      return self.defer(self.onRemoveCallback.bind(self), [component]);
+      if (component._physijs) return self.defer(self.onRemoveCallback.bind(self), [component]);
+      return;
     }
   };
 
