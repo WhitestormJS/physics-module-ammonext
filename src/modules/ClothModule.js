@@ -1,4 +1,3 @@
-import {Mesh} from '../core/mesh';
 import {Vector3, BufferGeometry, BufferAttribute} from 'three';
 import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
 
