@@ -7,16 +7,16 @@ export const api = {
 
   // set mass(mass) {
   //   this._physijs.mass = mass;
-  //   if (this.worldModule) this.worldModule.execute('updateMass', {id: this._physijs.id, mass});
+  //   if (this.manager.get('module:world')) this.manager.get('module:world').execute('updateMass', {id: this._physijs.id, mass});
   // }
 
   applyCentralImpulse(force) {
-    if (this.worldModule) this.worldModule.execute('applyCentralImpulse', {id: this._physijs.id, x: force.x, y: force.y, z: force.z});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('applyCentralImpulse', {id: this._physijs.id, x: force.x, y: force.y, z: force.z});
   },
 
   applyImpulse(force, offset) {
-    if (this.worldModule) {
-      this.worldModule.execute('applyImpulse', {
+    if (this.manager.has('module:world')) {
+      this.manager.get('module:world').execute('applyImpulse', {
         id: this._physijs.id,
         impulse_x: force.x,
         impulse_y: force.y,
@@ -29,8 +29,8 @@ export const api = {
   },
 
   applyTorque(force) {
-    if (this.worldModule) {
-      this.worldModule.execute('applyTorque', {
+    if (this.manager.has('module:world')) {
+      this.manager.get('module:world').execute('applyTorque', {
         id: this._physijs.id,
         torque_x: force.x,
         torque_y: force.y,
@@ -40,12 +40,12 @@ export const api = {
   },
 
   applyCentralForce(force) {
-    if (this.worldModule) this.worldModule.execute('applyCentralForce', {id: this._physijs.id, x: force.x, y: force.y, z: force.z});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('applyCentralForce', {id: this._physijs.id, x: force.x, y: force.y, z: force.z});
   },
 
   applyForce(force, offset) {
-    if (this.worldModule) {
-      this.worldModule.execute('applyForce', {
+    if (this.manager.has('module:world')) {
+      this.manager.get('module:world').execute('applyForce', {
         id: this._physijs.id,
         force_x: force.x,
         force_y: force.y,
@@ -62,7 +62,7 @@ export const api = {
   },
 
   setAngularVelocity(velocity) {
-    if (this.worldModule) this.worldModule.execute('setAngularVelocity', {id: this._physijs.id, x: velocity.x, y: velocity.y, z: velocity.z});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setAngularVelocity', {id: this._physijs.id, x: velocity.x, y: velocity.y, z: velocity.z});
   },
 
   getLinearVelocity() {
@@ -70,27 +70,27 @@ export const api = {
   },
 
   setLinearVelocity(velocity) {
-    if (this.worldModule) this.worldModule.execute('setLinearVelocity', {id: this._physijs.id, x: velocity.x, y: velocity.y, z: velocity.z});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setLinearVelocity', {id: this._physijs.id, x: velocity.x, y: velocity.y, z: velocity.z});
   },
 
   setAngularFactor(factor) {
-    if (this.worldModule) this.worldModule.execute('setAngularFactor', {id: this._physijs.id, x: factor.x, y: factor.y, z: factor.z});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setAngularFactor', {id: this._physijs.id, x: factor.x, y: factor.y, z: factor.z});
   },
 
   setLinearFactor(factor) {
-    if (this.worldModule) this.worldModule.execute('setLinearFactor', {id: this._physijs.id, x: factor.x, y: factor.y, z: factor.z});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setLinearFactor', {id: this._physijs.id, x: factor.x, y: factor.y, z: factor.z});
   },
 
   setDamping(linear, angular) {
-    if (this.worldModule) this.worldModule.execute('setDamping', {id: this._physijs.id, linear, angular});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setDamping', {id: this._physijs.id, linear, angular});
   },
 
   setCcdMotionThreshold(threshold) {
-    if (this.worldModule) this.worldModule.execute('setCcdMotionThreshold', {id: this._physijs.id, threshold});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setCcdMotionThreshold', {id: this._physijs.id, threshold});
   },
 
   setCcdSweptSphereRadius(radius) {
-    if (this.worldModule) this.worldModule.execute('setCcdSweptSphereRadius', {id: this._physijs.id, radius});
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('setCcdSweptSphereRadius', {id: this._physijs.id, radius});
   }
 }
 

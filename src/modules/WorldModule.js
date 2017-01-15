@@ -210,7 +210,6 @@ export class WorldModule extends Eventable {
   }
 
   _updateSoftbodies(data) {
-
     let index = data[1],
       offset = 2;
 
@@ -472,7 +471,7 @@ export class WorldModule extends Eventable {
                 );
               }
 
-              object.dispatchEvent('collision', object2, temp1, temp2, temp1Vector3);
+              component.emit('collision', object2, temp1, temp2, temp1Vector3);
             }
           }
         }
@@ -578,7 +577,7 @@ export class WorldModule extends Eventable {
     const _physijs = object._physijs || object.component._physijs;
 
     if (_physijs) {
-      component.worldModule = this;
+      component.manager.addDependency('module:world', this);
       _physijs.id = this.getObjectId();
 
       if (object instanceof Vehicle) {
@@ -633,6 +632,8 @@ export class WorldModule extends Eventable {
 
         this.execute('addObject', _physijs);
       }
+
+      component.emit('physics:added');
     }
   }
 
@@ -649,6 +650,7 @@ export class WorldModule extends Eventable {
       // Mesh.prototype.remove.call(this, object);
 
       if (object._physijs) {
+        component.manager.removeDependency('module:world');
         this._objects[object._physijs.id] = null;
         this.execute('removeObject', {id: object._physijs.id});
       }
