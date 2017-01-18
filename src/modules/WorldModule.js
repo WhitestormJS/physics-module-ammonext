@@ -37,7 +37,7 @@ export class WorldModule extends Eventable {
 
     const start = performance.now();
 
-    this._worker = new (require('worker-loader?inline!../worker.js'))();
+    this._worker = new (require('worker-loader?inline,name=worker.js!../worker.js'))();
     this._worker.transferableMessage = this._worker.webkitPostMessage || this._worker.postMessage;
 
     this.isLoaded = false;
