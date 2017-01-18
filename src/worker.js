@@ -1,5 +1,3 @@
-// const Ammo = require('ammonext');
-
 const transferableMessage = self.webkitPostMessage || self.postMessage,
 
   // enum
