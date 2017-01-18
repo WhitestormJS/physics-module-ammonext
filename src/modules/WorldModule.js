@@ -487,6 +487,7 @@ export class WorldModule extends Eventable {
   addConstraint(constraint, show_marker) {
     constraint.id = this.getObjectId();
     this._constraints[constraint.id] = constraint;
+    constraint.worldModule = this;
     this.execute('addConstraint', constraint.getDefinition());
 
     if (show_marker) {
@@ -702,6 +703,8 @@ export class WorldModule extends Eventable {
     this.setGravity = function(gravity) {
       if (gravity) self.execute('setGravity', gravity);
     }
+
+    this.addConstraint = self.addConstraint.bind(self);
 
     this.simulate = function(timeStep, maxSubSteps) {
       if (self._stats) self._stats.begin();

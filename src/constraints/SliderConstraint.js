@@ -13,7 +13,7 @@ export class SliderConstraint {
 
     this.type = 'slider';
     this.appliedImpulse = 0;
-    this.scene = objecta.parent;
+    this.worldModule = null; // Will be redefined by .addConstraint
     this.objecta = objecta._physijs.id;
     this.positiona = convertWorldPositionToObject(position, objecta).clone();
     this.axis = axis;
@@ -37,7 +37,7 @@ export class SliderConstraint {
   }
 
   setLimits(lin_lower, lin_upper, ang_lower, ang_upper) {
-    this.scene.execute('slider_setLimits', {
+    if (this.worldModule) this.worldModule.execute('slider_setLimits', {
       constraint: this.id,
       lin_lower,
       lin_upper,
@@ -47,7 +47,7 @@ export class SliderConstraint {
   }
 
   setRestitution(linear, angular) {
-    this.scene.execute(
+    if (this.worldModule) this.worldModule.execute(
       'slider_setRestitution',
       {
         constraint: this.id,
@@ -58,7 +58,7 @@ export class SliderConstraint {
   }
 
   enableLinearMotor(velocity, acceleration) {
-    this.scene.execute('slider_enableLinearMotor', {
+    if (this.worldModule) this.worldModule.execute('slider_enableLinearMotor', {
       constraint: this.id,
       velocity,
       acceleration
@@ -66,7 +66,7 @@ export class SliderConstraint {
   }
 
   disableLinearMotor() {
-    this.scene.execute('slider_disableLinearMotor', {constraint: this.id});
+    if (this.worldModule) this.worldModule.execute('slider_disableLinearMotor', {constraint: this.id});
   }
 
   enableAngularMotor(velocity, acceleration) {
@@ -78,6 +78,6 @@ export class SliderConstraint {
   }
 
   disableAngularMotor() {
-    this.scene.execute('slider_disableAngularMotor', {constraint: this.id});
+    if (this.worldModule) this.worldModule.execute('slider_disableAngularMotor', {constraint: this.id});
   }
 }

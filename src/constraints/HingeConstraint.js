@@ -13,7 +13,7 @@ export class HingeConstraint {
 
     this.type = 'hinge';
     this.appliedImpulse = 0;
-    this.scene = objecta.parent;
+    this.worldModule = null; // Will be redefined by .addConstraint
     this.objecta = objecta._physijs.id;
     this.positiona = convertWorldPositionToObject(position, objecta).clone();
     this.position = position.clone();
@@ -38,7 +38,7 @@ export class HingeConstraint {
   }
 
   setLimits(low, high, bias_factor, relaxation_factor) {
-    this.scene.execute('hinge_setLimits', {
+    if (this.worldModule) this.worldModule.execute('hinge_setLimits', {
       constraint: this.id,
       low,
       high,
@@ -48,7 +48,7 @@ export class HingeConstraint {
   }
 
   enableAngularMotor(velocity, acceleration) {
-    this.scene.execute('hinge_enableAngularMotor', {
+    if (this.worldModule) this.worldModule.execute('hinge_enableAngularMotor', {
       constraint: this.id,
       velocity,
       acceleration
@@ -56,6 +56,6 @@ export class HingeConstraint {
   }
 
   disableMotor() {
-    this.scene.execute('hinge_disableMotor', {constraint: this.id});
+    if (this.worldModule) this.worldModule.execute('hinge_disableMotor', {constraint: this.id});
   }
 }

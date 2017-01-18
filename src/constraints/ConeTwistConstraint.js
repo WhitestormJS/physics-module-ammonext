@@ -9,7 +9,7 @@ export class ConeTwistConstraint {
 
     this.type = 'conetwist';
     this.appliedImpulse = 0;
-    this.scene = objecta.parent;
+    this.worldModule = null; // Will be redefined by .addConstraint
     this.objecta = objecta._physijs.id;
     this.positiona = convertWorldPositionToObject(position, objecta).clone();
     this.objectb = objectb._physijs.id;
@@ -32,15 +32,15 @@ export class ConeTwistConstraint {
   }
 
   setLimit(x, y, z) {
-    this.scene.execute('conetwist_setLimit', {constraint: this.id, x, y, z});
+    if(this.worldModule) this.worldModule.execute('conetwist_setLimit', {constraint: this.id, x, y, z});
   }
 
   enableMotor() {
-    this.scene.execute('conetwist_enableMotor', {constraint: this.id});
+    if(this.worldModule) this.worldModule.execute('conetwist_enableMotor', {constraint: this.id});
   }
 
   setMaxMotorImpulse(max_impulse) {
-    this.scene.execute('conetwist_setMaxMotorImpulse', {constraint: this.id, max_impulse});
+    if(this.worldModule) this.worldModule.execute('conetwist_setMaxMotorImpulse', {constraint: this.id, max_impulse});
   }
 
   setMotorTarget(target) {
@@ -51,7 +51,7 @@ export class ConeTwistConstraint {
     else if (target instanceof THREE.Matrix4)
       target = new THREE.Quaternion().setFromRotationMatrix(target);
 
-    this.scene.execute('conetwist_setMotorTarget', {
+    if(this.worldModule) this.worldModule.execute('conetwist_setMotorTarget', {
       constraint: this.id,
       x: target.x,
       y: target.y,

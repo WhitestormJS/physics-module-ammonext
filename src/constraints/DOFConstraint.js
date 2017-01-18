@@ -12,7 +12,7 @@ export class DOFConstraint {
 
     this.type = 'dof';
     this.appliedImpulse = 0;
-    this.scene = objecta.parent;
+    this.worldModule = null; // Will be redefined by .addConstraint
     this.objecta = objecta._physijs.id;
     this.positiona = convertWorldPositionToObject( position, objecta ).clone();
     this.axisa = { x: objecta.rotation.x, y: objecta.rotation.y, z: objecta.rotation.z };
@@ -38,30 +38,30 @@ export class DOFConstraint {
   }
 
   setLinearLowerLimit(limit) {
-    this.scene.execute( 'dof_setLinearLowerLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
+    if (this.worldModule) this.worldModule.execute( 'dof_setLinearLowerLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
   }
 
   setLinearUpperLimit (limit) {
-    this.scene.execute( 'dof_setLinearUpperLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
+    if (this.worldModule) this.worldModule.execute( 'dof_setLinearUpperLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
   }
 
   setAngularLowerLimit (limit) {
-    this.scene.execute( 'dof_setAngularLowerLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
+    if (this.worldModule) this.worldModule.execute( 'dof_setAngularLowerLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
   }
 
   setAngularUpperLimit (limit) {
-    this.scene.execute( 'dof_setAngularUpperLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
+    if (this.worldModule) this.worldModule.execute( 'dof_setAngularUpperLimit', { constraint: this.id, x: limit.x, y: limit.y, z: limit.z } );
   }
 
   enableAngularMotor (which) {
-    this.scene.execute( 'dof_enableAngularMotor', { constraint: this.id, which: which } );
+    if (this.worldModule) this.worldModule.execute( 'dof_enableAngularMotor', { constraint: this.id, which: which } );
   }
 
   configureAngularMotor (which, low_angle, high_angle, velocity, max_force ) {
-    this.scene.execute( 'dof_configureAngularMotor', { constraint: this.id, which: which, low_angle: low_angle, high_angle: high_angle, velocity: velocity, max_force: max_force } );
+    if (this.worldModule) this.worldModule.execute( 'dof_configureAngularMotor', { constraint: this.id, which: which, low_angle: low_angle, high_angle: high_angle, velocity: velocity, max_force: max_force } );
   }
 
   disableAngularMotor (which) {
-    this.scene.execute( 'dof_disableAngularMotor', { constraint: this.id, which: which } );
+    if (this.worldModule) this.worldModule.execute( 'dof_disableAngularMotor', { constraint: this.id, which: which } );
   }
 }
