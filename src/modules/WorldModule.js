@@ -121,6 +121,7 @@ export class WorldModule extends Eventable {
             break;
 
           case 'ammoLoaded':
+            this.dispatchEvent('loaded');
             console.log("Physics loading time: " + (performance.now() - start) + "ms");
             break;
 
@@ -224,6 +225,13 @@ export class WorldModule extends Eventable {
       const volumePositions = attributes.position.array;
 
       const offsetVert = offset + 2;
+
+      if (!_physijs.isSoftBodyReset) {
+        object.position.set(0, 0, 0);
+        object.quaternion.set(0, 0, 0, 0);
+        
+        _physijs.isSoftBodyReset = true;
+      }
 
       if (_physijs.type === "softTrimesh") {
         const volumeNormals = attributes.normal.array;
@@ -619,10 +627,13 @@ export class WorldModule extends Eventable {
           w: object.quaternion.w
         };
 
-        if (_physijs.isSoftbody) {
-          object.position.set(0, 0, 0);
-          object.quaternion.set(0, 0, 0, 1);
-        }
+        // if (_physijs.isSoftbody) {
+        //   this.addEventListener('ready', () => {
+        //     console.log('mesh:reset');
+        //     object.position.set(0, 0, 0);
+        //     object.quaternion.set(0, 0, 0, 1);
+        //   });
+        // }
 
         // Check for scaling
         // var mass_scaling = new Vector3(1, 1, 1);
