@@ -5,7 +5,7 @@ export * from './ConcaveModule';
 // export * from './coneMesh';
 export * from './ConvexModule';
 export * from './CylinderModule';
-// export * from './heightfieldMesh';
+export * from './HeightfieldModule';
 export * from './PlaneModule';
 export * from './SphereModule';
 export * from './SoftbodyModule';
