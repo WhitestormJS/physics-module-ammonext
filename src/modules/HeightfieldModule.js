@@ -1,4 +1,4 @@
-import {Vector3, BufferGeometry} from 'three';
+import {Vector2, Vector3, BufferGeometry} from 'three';
 import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
 
 export class HeightfieldModule {
@@ -6,10 +6,12 @@ export class HeightfieldModule {
     this.params = Object.assign({
       mass: 10,
       scale: new Vector3(1, 1, 1),
+      size: new Vector2(1, 1),
       restitution: 0.3,
       friction: 0.8,
       damping: 0,
-      margin: 0
+      margin: 0,
+      autoAlign: false
     }, params);
   }
 
@@ -34,7 +36,7 @@ export class HeightfieldModule {
   }
 
   bridge = {
-    geometry(geometry) {
+    geometry(geometry, self) {
       const isBuffer = geometry instanceof BufferGeometry;
       const verts = isBuffer ? geometry.attributes.position.array : geometry.vertices;
 
@@ -42,13 +44,17 @@ export class HeightfieldModule {
 
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      this._physijs.xsize = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      this._physijs.ysize = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      const xdiv = self.params.size.x;
+      const ydiv = self.params.size.y;
+
+      const xsize = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      const ysize = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
+      
       this._physijs.xpts = (typeof xdiv === 'undefined') ? Math.sqrt(size) : xdiv + 1;
       this._physijs.ypts = (typeof ydiv === 'undefined') ? Math.sqrt(size) : ydiv + 1;
 
       // note - this assumes our plane geometry is square, unless we pass in specific xdiv and ydiv
-      this._physijs.absMaxHeight = Math.max(geometry.boundingBox.max.z, Math.abs(geometry.boundingBox.min.z));
+      this._physijs.absMaxHeight = Math.max(geometry.boundingBox.max.y, Math.abs(geometry.boundingBox.min.y));
 
       const points = new Float32Array(size),
         xpts = this._physijs.xpts,
@@ -57,11 +63,17 @@ export class HeightfieldModule {
       while (size--) {
         const vNum = size % xpts + ((ypts - Math.round((size / xpts) - ((size % xpts) / xpts)) - 1) * ypts);
 
-        if (isBuffer) points[size] = verts[vNum * 3 + 2];
-        else points[size] = verts[vNum].z;
+        if (isBuffer) points[size] = verts[vNum * 3 + 1];
+        else points[size] = verts[vNum].y;
       }
 
       this._physijs.points = points;
+
+      this._physijs.scale.multiply(
+        new THREE.Vector3(xsize / (xpts - 1), 1, ysize / (ypts - 1))
+      );
+
+      if (self.params.autoAlign) geometry.translate(xsize / -2, 0, ysize / -2);
 
       return geometry;
     },

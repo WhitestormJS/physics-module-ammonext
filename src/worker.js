@@ -231,16 +231,11 @@ const createShape = (description) => {
         1,
         -description.absMaxHeight,
         description.absMaxHeight,
-        2,
+        1,
         'PHY_FLOAT',
         false
       );
-
-      _vec3_1.setX(description.xsize / (description.xpts - 1));
-      _vec3_1.setY(description.ysize / (description.ypts - 1));
-      _vec3_1.setZ(1);
-
-      shape.setLocalScaling(_vec3_1);
+      
       _noncached_shapes[description.id] = shape;
       break;
     }
