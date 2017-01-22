@@ -229,7 +229,7 @@ export class WorldModule extends Eventable {
       if (!_physijs.isSoftBodyReset) {
         object.position.set(0, 0, 0);
         object.quaternion.set(0, 0, 0, 0);
-        
+
         _physijs.isSoftBodyReset = true;
       }
 
@@ -626,17 +626,6 @@ export class WorldModule extends Eventable {
           z: object.quaternion.z,
           w: object.quaternion.w
         };
-
-        // if (_physijs.isSoftbody) {
-        //   this.addEventListener('ready', () => {
-        //     console.log('mesh:reset');
-        //     object.position.set(0, 0, 0);
-        //     object.quaternion.set(0, 0, 0, 1);
-        //   });
-        // }
-
-        // Check for scaling
-        // var mass_scaling = new Vector3(1, 1, 1);
 
         if (_physijs.width) _physijs.width *= object.scale.x;
         if (_physijs.height) _physijs.height *= object.scale.y;

@@ -19,20 +19,20 @@ export class ClothModule {
     }, params);
   }
 
-  // appendAnchor(world, object, node, influence, collisionBetweenLinkedBodies = true) {
-  //   const o1 = this._physijs.id;
-  //   const o2 = object._physijs.id;
-  //
-  //   world.execute('appendAnchor', {
-  //     obj: o1,
-  //     obj2: o2,
-  //     node,
-  //     influence,
-  //     collisionBetweenLinkedBodies
-  //   });
-  // }
+  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
+    const o1 = this._physijs.id;
+    const o2 = object._physijs.id;
 
-  integrate(params) {
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('appendAnchor', {
+      obj: o1,
+      obj2: o2,
+      node,
+      influence,
+      collisionBetweenLinkedBodies
+    });
+  }
+
+  integrate(params, self) {
     this._physijs = {
       type: 'softClothMesh',
       mass: params.mass,
@@ -54,6 +54,8 @@ export class ClothModule {
       rigidHardness: params.rigidHardness,
       scale: params.scale
     };
+
+    this.appendAnchor = self.appendAnchor.bind(this);
 
     wrapPhysicsPrototype(this);
   }

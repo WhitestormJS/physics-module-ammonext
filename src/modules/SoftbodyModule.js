@@ -21,59 +21,20 @@ export class SoftbodyModule{
     }, params);
   }
 
-  // createIndexedBufferGeometryFromGeometry(geometry) {
-  //   const numVertices = geometry.vertices.length;
-  //   const numFaces = geometry.faces.length;
-  //   const bufferGeom = new BufferGeometry();
-  //   const vertices = new Float32Array(numVertices * 3);
-  //   const indices = new (numFaces * 3 > 65535 ? Uint32Array : Uint16Array)(numFaces * 3);
+  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
+    const o1 = this._physijs.id;
+    const o2 = object._physijs.id;
 
-  //   for (let i = 0; i < numVertices; i++) {
-  //     const p = geometry.vertices[i];
-  //     const i3 = i * 3;
-
-  //     vertices[i3] = p.x;
-  //     vertices[i3 + 1] = p.y;
-  //     vertices[i3 + 2] = p.z;
-  //   }
-
-  //   for (let i = 0; i < numFaces; i++) {
-  //     const f = geometry.faces[i];
-  //     const i3 = i * 3;
-
-  //     indices[i3] = f.a;
-  //     indices[i3 + 1] = f.b;
-  //     indices[i3 + 2] = f.c;
-  //   }
-
-  //   bufferGeom.setIndex(new BufferAttribute(indices, 1));
-  //   bufferGeom.addAttribute('position', new BufferAttribute(vertices, 3));
-
-  //   return bufferGeom;
-  // }
-
-  isEqual(x1, y1, z1, x2, y2, z2) {
-    const delta = 0.000001;
-
-    return Math.abs(x2 - x1) < delta
-      && Math.abs(y2 - y1) < delta
-      && Math.abs(z2 - z1) < delta;
+    if (this.manager.has('module:world')) this.manager.get('module:world').execute('appendAnchor', {
+      obj: o1,
+      obj2: o2,
+      node,
+      influence,
+      collisionBetweenLinkedBodies
+    });
   }
 
-  // appendAnchor(world, object, node, influence, collisionBetweenLinkedBodies = true) {
-  //   const o1 = this._physijs.id;
-  //   const o2 = object._physijs.id;
-
-  //   world.execute('appendAnchor', {
-  //     obj: o1,
-  //     obj2: o2,
-  //     node,
-  //     influence,
-  //     collisionBetweenLinkedBodies
-  //   });
-  // }
-
-  integrate(params) {
+  integrate(params, self) {
     this._physijs = {
       type: 'softTrimesh',
       mass: params.mass,
@@ -96,6 +57,8 @@ export class SoftbodyModule{
       rigidHardness: params.rigidHardness
     };
 
+    this.appendAnchor = self.appendAnchor.bind(this);
+
     wrapPhysicsPrototype(this);
   }
 
@@ -111,7 +74,7 @@ export class SoftbodyModule{
           bufferGeometry.addAttribute(
             'position',
             new BufferAttribute(
-              new Float32Array(geometry.vertices.length * 3), 
+              new Float32Array(geometry.vertices.length * 3),
               3
             ).copyVector3sArray(geometry.vertices)
           );
