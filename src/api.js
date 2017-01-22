@@ -67,30 +67,33 @@ const convertWorldPositionToObject = (position, object) => {
 
 const addObjectChildren = function (parent, object) {
   for (let i = 0; i < object.children.length; i++) {
-    if (object.children[i]._physijs) {
-      object.children[i].updateMatrix();
-      object.children[i].updateMatrixWorld();
+    const child = object.children[i];
+    const _physijs = child.component._physijs;
 
-      temp1Vector3.setFromMatrixPosition(object.children[i].matrixWorld);
-      temp1Quat.setFromRotationMatrix(object.children[i].matrixWorld);
+    if (_physijs) {
+      child.updateMatrix();
+      child.updateMatrixWorld();
 
-      object.children[i]._physijs.position_offset = {
+      temp1Vector3.setFromMatrixPosition(child.matrixWorld);
+      temp1Quat.setFromRotationMatrix(child.matrixWorld);
+
+      _physijs.position_offset = {
         x: temp1Vector3.x,
         y: temp1Vector3.y,
         z: temp1Vector3.z
       };
 
-      object.children[i]._physijs.rotation = {
+      _physijs.rotation = {
         x: temp1Quat.x,
         y: temp1Quat.y,
         z: temp1Quat.z,
         w: temp1Quat.w
       };
 
-      parent._physijs.children.push(object.children[i]._physijs);
+      parent.component._physijs.children.push(_physijs);
     }
 
-    addObjectChildren(parent, object.children[i]);
+    addObjectChildren(parent, child);
   }
 };
 
