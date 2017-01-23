@@ -1,5 +1,6 @@
 export * from './WorldModule';
 export * from './BoxModule';
+export * from './CompoundModule';
 export * from './CapsuleModule';
 export * from './ConcaveModule';
 // export * from './coneMesh';

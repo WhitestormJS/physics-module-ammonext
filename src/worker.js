@@ -87,6 +87,11 @@ const createShape = (description) => {
 
   _transform.setIdentity();
   switch (description.type) {
+    case 'compound': {
+      shape = new Ammo.btCompoundShape();
+
+      break;
+    }
     case 'plane': {
       const cache_key = `plane_${description.normal.x}_${description.normal.y}_${description.normal.z}`;
 
@@ -235,7 +240,7 @@ const createShape = (description) => {
         'PHY_FLOAT',
         false
       );
-      
+
       _noncached_shapes[description.id] = shape;
       break;
     }
