@@ -17,7 +17,9 @@ export class SphereModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'sphere',
       touches: [],

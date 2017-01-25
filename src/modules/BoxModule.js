@@ -13,7 +13,9 @@ export class BoxModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'box',
       mass: params.mass,

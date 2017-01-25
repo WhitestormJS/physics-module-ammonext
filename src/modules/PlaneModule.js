@@ -13,7 +13,9 @@ export class PlaneModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'plane',
       touches: [],
@@ -47,4 +49,3 @@ export class PlaneModule {
     onWrap
   }
 }
-

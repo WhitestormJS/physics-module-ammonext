@@ -13,7 +13,9 @@ export class CylinderModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'cylinder',
       width: params.width,

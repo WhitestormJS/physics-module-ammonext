@@ -13,7 +13,9 @@ export class CompoundModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'compound',
       mass: params.mass,

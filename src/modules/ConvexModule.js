@@ -13,7 +13,9 @@ export class ConvexModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'convex',
       mass: params.mass,

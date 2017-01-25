@@ -63,7 +63,9 @@ export class ConcaveModule {
     return data;
   };
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'concave',
       mass: params.mass,

@@ -15,7 +15,9 @@ export class HeightfieldModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'heightfield',
       friction: params.friction,
@@ -49,7 +51,7 @@ export class HeightfieldModule {
 
       const xsize = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
       const ysize = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
-      
+
       this._physijs.xpts = (typeof xdiv === 'undefined') ? Math.sqrt(size) : xdiv + 1;
       this._physijs.ypts = (typeof ydiv === 'undefined') ? Math.sqrt(size) : ydiv + 1;
 

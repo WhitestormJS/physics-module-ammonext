@@ -15,7 +15,9 @@ export class CapsuleModule {
     }, params);
   }
 
-  integrate(params) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'capsule',
       radius: Math.max(params.width / 2, params.depth / 2),

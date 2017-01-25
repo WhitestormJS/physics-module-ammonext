@@ -32,7 +32,9 @@ export class ClothModule {
     });
   }
 
-  integrate(params, self) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'softClothMesh',
       mass: params.mass,

@@ -34,7 +34,9 @@ export class SoftbodyModule{
     });
   }
 
-  integrate(params, self) {
+  integrate(self) {
+    const params = self.params;
+
     this._physijs = {
       type: 'softTrimesh',
       mass: params.mass,

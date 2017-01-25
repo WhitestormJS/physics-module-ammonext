@@ -693,7 +693,9 @@ export class WorldModule extends Eventable {
     }
   };
 
-  integrate(params, self) {
+  integrate(self) {
+    const params = self.params;
+
     // ...
 
     this.setFixedTimeStep = function(fixedTimeStep) {
