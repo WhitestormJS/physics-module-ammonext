@@ -11,4 +11,4 @@ export * from './PlaneModule';
 export * from './SphereModule';
 export * from './SoftbodyModule';
 export * from './ClothModule';
-// export * from './ropeMesh';
+export * from './RopeModule';
