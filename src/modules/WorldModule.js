@@ -217,9 +217,10 @@ export class WorldModule extends Eventable {
     while (index--) {
       const size = data[offset + 1];
       const object = this._objects[data[offset]];
-      const _physijs = object.component._physijs;
 
       if (object === null) continue;
+
+      const _physijs = object.component._physijs;
 
       const attributes = object.geometry.attributes;
       const volumePositions = attributes.position.array;
@@ -291,6 +292,7 @@ export class WorldModule extends Eventable {
         }
 
         attributes.normal.needsUpdate = true;
+        offset += 2 + size * 18;
       }
       else if (_physijs.type === "softRopeMesh") {
         for (let i = 0; i < size; i++) {
@@ -304,6 +306,8 @@ export class WorldModule extends Eventable {
           volumePositions[i * 3 + 1] = y;
           volumePositions[i * 3 + 2] = z;
         }
+
+        offset += 2 + size * 3;
       } else {
         const volumeNormals = attributes.normal.array;
 
@@ -329,11 +333,10 @@ export class WorldModule extends Eventable {
         }
 
         attributes.normal.needsUpdate = true;
+        offset += 2 + size * 6;
       }
 
       attributes.position.needsUpdate = true;
-
-      offset += 2 + size * 18;
     }
 
     // if (this.SUPPORT_TRANSFERABLE)
