@@ -480,6 +480,7 @@ public_functions.addObject = (description) => {
     body.setTotalMass(description.mass, false);
     world.addSoftBody(body, 1, -1);
     if (description.type === 'softTrimesh') _softbody_report_size += body.get_m_faces().size() * 3;
+    else if (description.type === 'softRopeMesh') _softbody_report_size += body.get_m_nodes().size();
     else _softbody_report_size += body.get_m_nodes().size() * 3;
 
     _num_softbody_objects++;
@@ -1418,7 +1419,7 @@ const reportWorld_softbodies = () => {
             softreport[off + 2] = vert.z();
           }
 
-          offset += size * 6 + 2;
+          offset += size * 3 + 2;
         }
         else if (object.cloth) {
           const nodes = object.get_m_nodes();
