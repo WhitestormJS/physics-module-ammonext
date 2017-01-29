@@ -3,7 +3,7 @@ export * from './BoxModule';
 export * from './CompoundModule';
 export * from './CapsuleModule';
 export * from './ConcaveModule';
-// export * from './coneMesh';
+export * from './ConeModule';
 export * from './ConvexModule';
 export * from './CylinderModule';
 export * from './HeightfieldModule';
