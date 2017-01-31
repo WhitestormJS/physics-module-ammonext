@@ -772,7 +772,7 @@ export class WorldModule extends Eventable {
     // simulateProcess();
 
     self.loader.then(() => {
-      new WHS.Loop((clock) => {
+      new Loop((clock) => {
         this.simulate(clock.getDelta(), 1); // delta, 1
       }).start(this);
 

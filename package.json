@@ -2,7 +2,7 @@
   "name": "physics-module-ammonext",
   "version": "0.0.1-dev.1",
   "description": "physics module for Whitestorm.js",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "gulp dev --port 8001"
@@ -35,6 +35,7 @@
     "express": "^4.14.0",
     "gulp": "^3.9.1",
     "serve-index": "^1.8.0",
+    "three": "^0.84.0",
     "webpack": "^2.1.0-beta.28",
     "webpack-dev-middleware": "^1.8.4",
     "webworkify-webpack": "^2.0.1",
