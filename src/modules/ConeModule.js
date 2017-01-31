@@ -18,7 +18,6 @@ export class ConeModule {
 
     this._physijs = {
       type: 'cone',
-      radius: params.width / 2,
       mass: params.mass,
       touches: [],
       linearVelocity: new Vector3(),
@@ -39,7 +38,7 @@ export class ConeModule {
     geometry(geometry) {
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      this._physijs.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      this._physijs.radius = (geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2;
       this._physijs.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
 
       return geometry;
