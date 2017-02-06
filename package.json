@@ -1,8 +1,8 @@
 {
   "name": "physics-module-ammonext",
-  "version": "0.0.1-dev.1",
+  "version": "0.1.0",
   "description": "physics module for Whitestorm.js",
-  "main": "src/index.js",
+  "main": "build/physics-module.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "gulp dev --port 8001",

@@ -2,4 +2,3 @@ export * from './api';
 export * from './eventable';
 export * from './constraints/index';
 export * from './modules/index';
-export * from './vehicle/index';
