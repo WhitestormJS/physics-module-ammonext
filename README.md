@@ -255,3 +255,39 @@ const rope = new WHS.Line({
 
 rope.addTo(app);
 ```
+
+# Additional available physics parameters
+## RigidBody
+
+```javascript
+{
+  restitution: 0.3,
+  friction: 0.8,
+  damping: 0,
+  margin: 0
+}
+```
+
+## SodtBody (`SoftModule`, `ClothModule`, `RopeModule`)
+
+```javascript
+{
+  friction: 0.8,
+  damping: 0,
+  margin: 0,
+  klst: 0.9,
+  kvst: 0.9,
+  kast: 0.9,
+  piterations: 1,
+  viterations: 0,
+  diterations: 0,
+  citerations: 4,
+  anchorHardness: 0.7,
+  rigidHardness: 1
+}
+```
+
+## FAQ
+**Q: My `ClothModule` doesn't work properly, what to do?**
+
+A: In 90% cases it is because you have set `pressure` parameter. You shouldn't set it for `ClothModule`.
