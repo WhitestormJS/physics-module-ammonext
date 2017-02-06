@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "gulp dev --port 8001"
+    "start": "gulp dev --port 8001",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,8 @@
     "worker-loader": "^0.7.1"
   },
   "dependencies": {
-    "ammonext": "0.0.3"
+    "ammonext": "0.0.3",
+    "three": "^0.84.0",
+    "whs": "^2.0.0-beta.2"
   }
 }
