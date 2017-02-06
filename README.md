@@ -1,4 +1,4 @@
-# physics-module-ammonext
+# physics-module-ammonext [![NPM Version](https://img.shields.io/npm/v/physics-module-ammonext.svg?style=flat-square)](https://www.npmjs.com/package/physics-module-ammonext)
 Physics module for Whitestorm.js [Beta]
 
 > Go to [WhitestormJS/whitestorm.js](https://github.com/WhitestormJS/whitestorm.js)
