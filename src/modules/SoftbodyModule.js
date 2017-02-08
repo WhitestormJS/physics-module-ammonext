@@ -7,6 +7,7 @@ export class SoftbodyModule{
       restitution: 0.3,
       friction: 0.8,
       damping: 0,
+      scale: new Vector3(1, 1, 1),
       pressure: 100,
       margin: 0,
       klst: 0.9,
@@ -40,6 +41,7 @@ export class SoftbodyModule{
     this._physijs = {
       type: 'softTrimesh',
       mass: params.mass,
+      scale: params.scale,
       touches: [],
       friction: params.friction,
       damping: params.damping,

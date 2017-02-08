@@ -457,6 +457,8 @@ public_functions.addObject = (description) => {
     if (description.kvst) body.get_m_materials().at(0).set_m_kVST(description.kvst);
 
     Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(description.margin ? description.margin : 0.1);
+
+    // Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setLocalScaling(_vec3_1);
     body.setActivationState(description.state || 4);
     body.type = 0; // SoftBody.
     if (description.type === 'softRopeMesh') body.rope = true;
@@ -476,6 +478,12 @@ public_functions.addObject = (description) => {
     _transform.setRotation(_quat);
 
     body.transform(_transform);
+
+    _vec3_1.setX(description.scale.x);
+    _vec3_1.setY(description.scale.y);
+    _vec3_1.setZ(description.scale.z);
+
+    body.scale(_vec3_1);
 
     body.setTotalMass(description.mass, false);
     world.addSoftBody(body, 1, -1);
@@ -525,6 +533,7 @@ public_functions.addObject = (description) => {
     _vec3_1.setZ(description.scale.z);
 
     shape.setLocalScaling(_vec3_1);
+    shape.setMargin(description.margin ? description.margin : 0);
 
     _vec3_1.setX(0);
     _vec3_1.setY(0);
@@ -553,7 +562,6 @@ public_functions.addObject = (description) => {
     rbInfo.set_m_angularDamping(description.damping);
 
     body = new Ammo.btRigidBody(rbInfo);
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(description.margin ? description.margin : 0);
     body.setActivationState(description.state || 4);
     Ammo.destroy(rbInfo);
 
