@@ -774,9 +774,11 @@ export class WorldModule extends Eventable {
     // simulateProcess();
 
     self.loader.then(() => {
-      new Loop((clock) => {
+      self.simulateLoop = new Loop((clock) => {
         this.simulate(clock.getDelta(), 1); // delta, 1
-      }).start(this);
+      });
+
+      self.simulateLoop.start(this);
 
       this.setGravity(params.gravity);
     });
