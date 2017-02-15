@@ -1,6 +1,6 @@
 {
   "name": "physics-module-ammonext",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "physics module for Whitestorm.js",
   "main": "build/physics-module.js",
   "scripts": {
