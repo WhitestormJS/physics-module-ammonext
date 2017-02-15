@@ -37,8 +37,8 @@ export class WorldModule extends Eventable {
 
     const start = performance.now();
 
-    this._worker = new (require('worker-loader?inline,name=worker.js!../worker.js'))();
-    this._worker.transferableMessage = this._worker.webkitPostMessage || this._worker.postMessage;
+    this.worker = new (require('worker-loader?inline,name=worker.js!../worker.js'))();
+    this.worker.transferableMessage = this.worker.webkitPostMessage || this.worker.postMessage;
 
     this.isLoaded = false;
 
@@ -73,11 +73,13 @@ export class WorldModule extends Eventable {
       };
     })();
 
+    // Test SUPPORT_TRANSFERABLE
+
     const ab = new ArrayBuffer(1);
-    this._worker.transferableMessage(ab, [ab]);
+    this.worker.transferableMessage(ab, [ab]);
     this.SUPPORT_TRANSFERABLE = (ab.byteLength === 0);
 
-    this._worker.onmessage = (event) => {
+    this.worker.onmessage = (event) => {
       let _temp,
         data = event.data;
 
@@ -88,23 +90,23 @@ export class WorldModule extends Eventable {
         // transferable object
         switch (data[0]) {
           case MESSAGE_TYPES.WORLDREPORT:
-            this._updateScene(data);
+            this.updateScene(data);
             break;
 
           case MESSAGE_TYPES.SOFTREPORT:
-            this._updateSoftbodies(data);
+            this.updateSoftbodies(data);
             break;
 
           case MESSAGE_TYPES.COLLISIONREPORT:
-            this._updateCollisions(data);
+            this.updateCollisions(data);
             break;
 
           case MESSAGE_TYPES.VEHICLEREPORT:
-            this._updateVehicles(data);
+            this.updateVehicles(data);
             break;
 
           case MESSAGE_TYPES.CONSTRAINTREPORT:
-            this._updateConstraints(data);
+            this.updateConstraints(data);
             break;
           default:
         }
@@ -138,19 +140,19 @@ export class WorldModule extends Eventable {
       } else {
         switch (data[0]) {
           case MESSAGE_TYPES.WORLDREPORT:
-            this._updateScene(data);
+            this.updateScene(data);
             break;
 
           case MESSAGE_TYPES.COLLISIONREPORT:
-            this._updateCollisions(data);
+            this.updateCollisions(data);
             break;
 
           case MESSAGE_TYPES.VEHICLEREPORT:
-            this._updateVehicles(data);
+            this.updateVehicles(data);
             break;
 
           case MESSAGE_TYPES.CONSTRAINTREPORT:
-            this._updateConstraints(data);
+            this.updateConstraints(data);
             break;
           default:
         }
@@ -158,7 +160,7 @@ export class WorldModule extends Eventable {
     };
   }
 
-  _updateScene(data) {
+  updateScene(data) {
     let index = data[1];
 
     while (index--) {
@@ -204,13 +206,13 @@ export class WorldModule extends Eventable {
     }
 
     if (this.SUPPORT_TRANSFERABLE)
-      this._worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+      this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
 
     this._is_simulating = false;
     this.dispatchEvent('update');
   }
 
-  _updateSoftbodies(data) {
+  updateSoftbodies(data) {
     let index = data[1],
       offset = 2;
 
@@ -340,12 +342,12 @@ export class WorldModule extends Eventable {
     }
 
     // if (this.SUPPORT_TRANSFERABLE)
-    //   this._worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+    //   this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
 
     this._is_simulating = false;
   }
 
-  _updateVehicles(data) {
+  updateVehicles(data) {
     let vehicle, wheel;
 
     for (let i = 0; i < (data.length - 1) / VEHICLEREPORT_ITEMSIZE; i++) {
@@ -371,10 +373,10 @@ export class WorldModule extends Eventable {
     }
 
     if (this.SUPPORT_TRANSFERABLE)
-      this._worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+      this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
   }
 
-  _updateConstraints(data) {
+  updateConstraints(data) {
     let constraint, object;
 
     for (let i = 0; i < (data.length - 1) / CONSTRAINTREPORT_ITEMSIZE; i++) {
@@ -398,10 +400,10 @@ export class WorldModule extends Eventable {
     }
 
     if (this.SUPPORT_TRANSFERABLE)
-      this._worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+      this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
   }
 
-  _updateCollisions(data) {
+  updateCollisions(data) {
     /**
      * #TODO
      * This is probably the worst way ever to handle collisions. The inherent evilness is a residual
@@ -492,7 +494,7 @@ export class WorldModule extends Eventable {
     this.collisions = collisions;
 
     if (this.SUPPORT_TRANSFERABLE)
-      this._worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+      this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
   }
 
   addConstraint(constraint, show_marker) {
@@ -581,7 +583,7 @@ export class WorldModule extends Eventable {
   }
 
   execute(cmd, params) {
-    this._worker.postMessage({cmd, params});
+    this.worker.postMessage({cmd, params});
   }
 
   onAddCallback(component) {
@@ -682,7 +684,7 @@ export class WorldModule extends Eventable {
   }
 
   manager(manager) {
-    manager.add('physicsWorker', this._worker);
+    manager.add('physicsWorker', this.worker);
   }
 
   bridge = {
