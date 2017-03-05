@@ -188,6 +188,10 @@ export class FirstPersonModule {
   constructor(object, params = {}) {
     this.object = object;
     this.params = params;
+
+    if (!this.params.block) {
+      this.params.block = document.getElementById('blocker');
+    }
   }
 
   manager(manager) {
@@ -201,10 +205,13 @@ export class FirstPersonModule {
       const pointerlockchange = () => {
         if (document.pointerLockElement === element
           || document.mozPointerLockElement === element
-          || document.webkitPointerLockElement === element)
+          || document.webkitPointerLockElement === element) {
           this.controls.enabled = true;
-        else
+          this.params.block.style.display = 'none';
+        } else {
           this.controls.enabled = false;
+          this.params.block.style.display = 'block';
+        }
       };
 
       document.addEventListener('pointerlockchange', pointerlockchange, false);
