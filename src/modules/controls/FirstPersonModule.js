@@ -1,3 +1,5 @@
+import {Loop} from 'whs';
+
 import {
   Object3D,
   Quaternion,
@@ -255,6 +257,6 @@ export class FirstPersonModule {
       self.controls.update(c.getDelta());
     };
 
-    self.updateLoop = new WHS.Loop(updateProcessor).start(this);
+    self.updateLoop = new Loop(updateProcessor).start(this);
   }
 }
