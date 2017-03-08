@@ -32,8 +32,18 @@ export default {
     libraryTarget: 'umd'
   },
   externals: {
-    three: 'THREE',
-    whs: 'WHS'
+    three : {
+      commonjs: 'three',
+      commonjs2: 'three',
+      amd: 'three',
+      root: 'THREE' // indicates global variable
+    },
+    whs : {
+      commonjs: 'whs',
+      commonjs2: 'whs',
+      amd: 'whs',
+      root: 'WHS' // indicates global variable
+    }
   },
   module: {
     rules: [
