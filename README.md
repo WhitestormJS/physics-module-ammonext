@@ -289,6 +289,17 @@ rope.addTo(app);
 }
 ```
 
+# Events
+## `collision`
+[Example](https://github.com/WhitestormJS/physics-module-ammonext/blob/master/src/modules/controls/FirstPersonModule.js#L39)
+
+```javascript
+player.on('collision', (otherObject, v, r, contactNormal) => {
+  if (contactNormal.y < 0.5) // Use a "good" threshold value between 0 and 1 here!
+    canJump = true;
+});
+```
+
 ## FAQ
 **Q: My `ClothModule` doesn't work properly, what to do?**
 
