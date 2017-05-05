@@ -13,7 +13,8 @@ Physics module for Whitestorm.js [Beta]
 const app = new WHS.App([
   // ...
   new PHYSICS.WorldModule({
-    gravity: new THREE.Vector3(0, -10, 0)
+    gravity: new THREE.Vector3(0, -10, 0),
+    ammo: 'path/to/ammo.js'
   })
 ]);
 
