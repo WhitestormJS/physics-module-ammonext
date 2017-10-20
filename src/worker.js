@@ -1,13 +1,13 @@
 const transferableMessage = self.webkitPostMessage || self.postMessage,
 
-  // enum
-  MESSAGE_TYPES = {
-    WORLDREPORT: 0,
-    COLLISIONREPORT: 1,
-    VEHICLEREPORT: 2,
-    CONSTRAINTREPORT: 3,
-    SOFTREPORT: 4
-  };
+// enum
+MESSAGE_TYPES = {
+  WORLDREPORT: 0,
+  COLLISIONREPORT: 1,
+  VEHICLEREPORT: 2,
+  CONSTRAINTREPORT: 3,
+  SOFTREPORT: 4
+};
 
   // temp variables
 let _object,
@@ -422,6 +422,7 @@ public_functions.setGravity = (description) => {
 };
 
 public_functions.appendAnchor = (description) => {
+  console.log(_objects[description.obj]);
   _objects[description.obj]
     .appendAnchor(
       description.node,

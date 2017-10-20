@@ -5,6 +5,8 @@ import json from 'rollup-plugin-json';
 import babel from 'rollup-plugin-babel';
 import replace from 'rollup-plugin-replace';
 import serve from 'rollup-plugin-serve';
+// import bundleWorker from 'rollup-plugin-bundle-worker';
+import bundleWorker from './bundle-worker/index';
 
 // Temporary fix.
 // const babelFix = babelPlugin => {
@@ -42,24 +44,26 @@ export default {
   },
 
   plugins: [
+    bundleWorker(),
     resolve({
       jsnext: true,
       main: true
     }),
-    // babelFix(
-      babel({
-        exclude: 'node_modules'
-      }),
-    // ),
+
+    babel({
+      exclude: 'node_modules'
+    }),
+
     commonjs({include: 'node_modules/**'}),
+
     json({
       preferConst: true
     }),
     replace({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)}),
     serve({
-      contentBase: ['build'],
+      contentBase: ['build', './'],
       port: 8001
-    })
+    }),
   ],
 
   targets: [

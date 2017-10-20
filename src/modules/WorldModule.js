@@ -23,6 +23,8 @@ import {
   CONSTRAINTREPORT_ITEMSIZE
 } from '../api';
 
+import PhysicsWorker from 'worker!../worker.js';
+
 export class WorldModule extends Eventable {
   constructor(params) {
     super();
@@ -37,7 +39,7 @@ export class WorldModule extends Eventable {
 
     const start = performance.now();
 
-    this.worker = new (require('worker-loader?inline,name=worker.js!../worker.js'))();
+    this.worker = new PhysicsWorker();
     this.worker.transferableMessage = this.worker.webkitPostMessage || this.worker.postMessage;
 
     this.isLoaded = false;
@@ -160,22 +162,22 @@ export class WorldModule extends Eventable {
     };
   }
 
-  updateScene(data) {
-    let index = data[1];
+  updateScene(info) {
+    let index = info[1];
 
     while (index--) {
       const offset = 2 + index * REPORT_ITEMSIZE;
-      const object = this._objects[data[offset]];
+      const object = this._objects[info[offset]];
       const component = object.component;
-      const _physijs = component._physijs;
+      const data = component.use('physics').data;
 
       if (object === null) continue;
 
       if (component.__dirtyPosition === false) {
         object.position.set(
-          data[offset + 1],
-          data[offset + 2],
-          data[offset + 3]
+          info[offset + 1],
+          info[offset + 2],
+          info[offset + 3]
         );
 
         component.__dirtyPosition = false;
@@ -183,30 +185,30 @@ export class WorldModule extends Eventable {
 
       if (component.__dirtyRotation === false) {
         object.quaternion.set(
-          data[offset + 4],
-          data[offset + 5],
-          data[offset + 6],
-          data[offset + 7]
+          info[offset + 4],
+          info[offset + 5],
+          info[offset + 6],
+          info[offset + 7]
         );
 
         component.__dirtyRotation = false;
       }
 
-      _physijs.linearVelocity.set(
-        data[offset + 8],
-        data[offset + 9],
-        data[offset + 10]
+      data.linearVelocity.set(
+        info[offset + 8],
+        info[offset + 9],
+        info[offset + 10]
       );
 
-      _physijs.angularVelocity.set(
-        data[offset + 11],
-        data[offset + 12],
-        data[offset + 13]
+      data.angularVelocity.set(
+        info[offset + 11],
+        info[offset + 12],
+        info[offset + 13]
       );
     }
 
     if (this.SUPPORT_TRANSFERABLE)
-      this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+      this.worker.transferableMessage(info.buffer, [info.buffer]); // Give the typed array back to the worker
 
     this._is_simulating = false;
     this.dispatchEvent('update');
@@ -437,15 +439,16 @@ export class WorldModule extends Eventable {
       if (!this._objects.hasOwnProperty(id1)) continue;
       const object = this._objects[id1];
       const component = object.component;
-      const _physijs = component._physijs;
+      const data = component.use('physics').data;
+
       if (object === null) continue;
 
       // If object touches anything, ...
       if (collisions[id1]) {
         // Clean up touches array
-        for (let j = 0; j < _physijs.touches.length; j++) {
-          if (collisions[id1].indexOf(_physijs.touches[j]) === -1)
-            _physijs.touches.splice(j--, 1);
+        for (let j = 0; j < data.touches.length; j++) {
+          if (collisions[id1].indexOf(data.touches[j]) === -1)
+            data.touches.splice(j--, 1);
         }
 
         // Handle each colliding object
@@ -453,20 +456,21 @@ export class WorldModule extends Eventable {
           const id2 = collisions[id1][j];
           const object2 = this._objects[id2];
           const component2 = object2.component;
-          const _physijs2 = component2._physijs;
+          const data2 = component2.use('physics').data;
 
           if (object2) {
             // If object was not already touching object2, notify object
-            if (_physijs.touches.indexOf(id2) === -1) {
-              _physijs.touches.push(id2);
+            if (data.touches.indexOf(id2) === -1) {
+              data.touches.push(id2);
 
-              temp1Vector3.subVectors(component.getLinearVelocity(), component2.getLinearVelocity());
+              const vel = component.use('physics').getLinearVelocity();
+              const vel2 = component2.use('physics').getLinearVelocity();
+
+              temp1Vector3.subVectors(vel, vel2);
               const temp1 = temp1Vector3.clone();
-
-              temp1Vector3.subVectors(component.getAngularVelocity(), component2.getAngularVelocity());
               const temp2 = temp1Vector3.clone();
 
-              let normal_offset = normal_offsets[`${_physijs.id}-${_physijs2.id}`];
+              let normal_offset = normal_offsets[`${data.id}-${data2.id}`];
 
               if (normal_offset > 0) {
                 temp1Vector3.set(
@@ -488,7 +492,7 @@ export class WorldModule extends Eventable {
             }
           }
         }
-      } else _physijs.touches.length = 0; // not touching other objects
+      } else data.touches.length = 0; // not touching other objects
     }
 
     this.collisions = collisions;
@@ -588,23 +592,23 @@ export class WorldModule extends Eventable {
 
   onAddCallback(component) {
     const object = component.native;
-    const _physijs = object._physijs || object.component._physijs;
+    const data = object.component.use('physics').data;
 
-    if (_physijs) {
-      component.manager.add('module:world', this);
-      _physijs.id = this.getObjectId();
+    if (data) {
+      component.manager.set('module:world', this);
+      data.id = this.getObjectId();
 
       if (object instanceof Vehicle) {
         this.onAddCallback(object.mesh);
-        this._vehicles[_physijs.id] = object;
-        this.execute('addVehicle', _physijs);
+        this._vehicles[data.id] = object;
+        this.execute('addVehicle', data);
       } else {
         component.__dirtyPosition = false;
         component.__dirtyRotation = false;
-        this._objects[_physijs.id] = object;
+        this._objects[data.id] = object;
 
         if (object.children.length) {
-          _physijs.children = [];
+          data.children = [];
           addObjectChildren(object, object);
         }
 
@@ -613,30 +617,35 @@ export class WorldModule extends Eventable {
             this._materials_ref_counts[object.material._physijs.id]++;
           else {
             this.execute('registerMaterial', object.material._physijs);
-            _physijs.materialId = object.material._physijs.id;
+            data.materialId = object.material._physijs.id;
             this._materials_ref_counts[object.material._physijs.id] = 1;
           }
         }
 
+        // object.quaternion.setFromEuler(object.rotation);
+        //
+        // console.log(object.component);
+        // console.log(object.rotation);
+
         // Object starting position + rotation
-        _physijs.position = {
+        data.position = {
           x: object.position.x,
           y: object.position.y,
           z: object.position.z
         };
 
-        _physijs.rotation = {
+        data.rotation = {
           x: object.quaternion.x,
           y: object.quaternion.y,
           z: object.quaternion.z,
           w: object.quaternion.w
         };
 
-        if (_physijs.width) _physijs.width *= object.scale.x;
-        if (_physijs.height) _physijs.height *= object.scale.y;
-        if (_physijs.depth) _physijs.depth *= object.scale.z;
+        if (data.width) data.width *= object.scale.x;
+        if (data.height) data.height *= object.scale.y;
+        if (data.depth) data.depth *= object.scale.z;
 
-        this.execute('addObject', _physijs);
+        this.execute('addObject', data);
       }
 
       component.emit('physics:added');
@@ -684,16 +693,17 @@ export class WorldModule extends Eventable {
   }
 
   manager(manager) {
-    manager.add('physicsWorker', this.worker);
+    manager.set('physicsWorker', this.worker);
   }
 
   bridge = {
     onAdd(component, self) {
-      if (component._physijs) return self.defer(self.onAddCallback.bind(self), [component]);
+      if (component.use('physics')) return self.defer(self.onAddCallback.bind(self), [component]);
       return;
     },
+
     onRemove(component, self) {
-      if (component._physijs) return self.defer(self.onRemoveCallback.bind(self), [component]);
+      if (component.use('physics')) return self.defer(self.onRemoveCallback.bind(self), [component]);
       return;
     }
   };
@@ -725,10 +735,10 @@ export class WorldModule extends Eventable {
 
         const object = self._objects[object_id];
         const component = object.component;
-        const _physijs = component._physijs;
+        const data = component.use('physics').data;
 
         if (object !== null && (component.__dirtyPosition || component.__dirtyRotation)) {
-          const update = {id: _physijs.id};
+          const update = {id: data.id};
 
           if (component.__dirtyPosition) {
             update.pos = {
@@ -737,7 +747,7 @@ export class WorldModule extends Eventable {
               z: object.position.z
             };
 
-            if (_physijs.isSoftbody) object.position.set(0, 0, 0);
+            if (data.isSoftbody) object.position.set(0, 0, 0);
 
             component.__dirtyPosition = false;
           }
@@ -750,7 +760,7 @@ export class WorldModule extends Eventable {
               w: object.quaternion.w
             };
 
-            if (_physijs.isSoftbody) object.rotation.set(0, 0, 0);
+            if (data.isSoftbody) object.rotation.set(0, 0, 0);
 
             component.__dirtyRotation = false;
           }
