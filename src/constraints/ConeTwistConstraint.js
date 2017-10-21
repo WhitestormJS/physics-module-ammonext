@@ -10,9 +10,9 @@ export class ConeTwistConstraint {
     this.type = 'conetwist';
     this.appliedImpulse = 0;
     this.worldModule = null; // Will be redefined by .addConstraint
-    this.objecta = objecta._physijs.id;
+    this.objecta = objecta.use('physics').data.id;
     this.positiona = convertWorldPositionToObject(position, objecta).clone();
-    this.objectb = objectb._physijs.id;
+    this.objectb = objectb.use('physics').data.id;
     this.positionb = convertWorldPositionToObject(position, objectb).clone();
     this.axisa = {x: objecta.rotation.x, y: objecta.rotation.y, z: objecta.rotation.z};
     this.axisb = {x: objectb.rotation.x, y: objectb.rotation.y, z: objectb.rotation.z};

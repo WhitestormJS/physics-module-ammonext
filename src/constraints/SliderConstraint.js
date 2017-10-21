@@ -14,12 +14,12 @@ export class SliderConstraint {
     this.type = 'slider';
     this.appliedImpulse = 0;
     this.worldModule = null; // Will be redefined by .addConstraint
-    this.objecta = objecta._physijs.id;
+    this.objecta = objecta.use('physics').data.id;
     this.positiona = convertWorldPositionToObject(position, objecta).clone();
     this.axis = axis;
 
     if (objectb) {
-      this.objectb = objectb._physijs.id;
+      this.objectb = objectb.use('physics').data.id;
       this.positionb = convertWorldPositionToObject(position, objectb).clone();
     }
   }

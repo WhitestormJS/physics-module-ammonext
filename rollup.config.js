@@ -60,10 +60,12 @@ export default {
       preferConst: true
     }),
     replace({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)}),
-    serve({
-      contentBase: ['build', './'],
-      port: 8001
-    }),
+    ...(process.env.NODE_ENV == 'production' ? [] : [
+      serve({
+        contentBase: ['build', './'],
+        port: 8001
+      })
+    ]),
   ],
 
   targets: [

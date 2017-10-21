@@ -1,74 +1,17 @@
-import {Vector3, BufferGeometry, BufferAttribute} from 'three';
-import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
+import {BufferGeometry, BufferAttribute} from 'three';
+import PhysicsModule from './PhysicsModule';
 
-export class ClothModule {
-  constructor(params = {}) {
-    this.params = Object.assign({
-      friction: 0.8,
-      damping: 0,
-      margin: 0,
-      scale: new Vector3(1, 1, 1),
-      klst: 0.9,
-      kvst: 0.9,
-      kast: 0.9,
-      piterations: 1,
-      viterations: 0,
-      diterations: 0,
-      citerations: 4,
-      anchorHardness: 0.7,
-      rigidHardness: 1
-    }, params);
-  }
-
-  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
-    const o1 = this._physijs.id;
-    const o2 = object._physijs.id;
-
-    if (this.manager.has('module:world')) this.manager.get('module:world').execute('appendAnchor', {
-      obj: o1,
-      obj2: o2,
-      node,
-      influence,
-      collisionBetweenLinkedBodies
-    });
-  }
-
-  integrate(self) {
-    const params = self.params;
-
-    this._physijs = {
+export class ClothModule extends PhysicsModule {
+  constructor(params) {
+    super({
       type: 'softClothMesh',
-      mass: params.mass,
-      touches: [],
-      isSoftbody: true,
-      scale: params.scale,
-      friction: params.friction,
-      damping: params.damping,
-      margin: params.margin,
-      klst: params.klst,
-      kast: params.kast,
-      kvst: params.kvst,
-      drag: params.drag,
-      lift: params.lift,
-      piterations: params.piterations,
-      viterations: params.viterations,
-      diterations: params.diterations,
-      citerations: params.citerations,
-      anchorHardness: params.anchorHardness,
-      rigidHardness: params.rigidHardness,
-      scale: params.scale
-    };
+      ...PhysicsModule.cloth()
+    }, params);
 
-    this.appendAnchor = self.appendAnchor.bind(this);
-
-    wrapPhysicsPrototype(this);
-  }
-
-  bridge = {
-    geometry(geometry, self) {
+    this.updateData((geometry, {data}) => {
       const geomParams = geometry.parameters;
 
-      const geom = geometry instanceof BufferGeometry
+      const geom = geometry.isBufferGeometry
         ? geometry
           : (() => {
           geometry.mergeVertices();
@@ -123,18 +66,29 @@ export class ClothModule {
       const idx10 = (geomParams.heightSegments + 1) * (geomParams.widthSegments + 1) - (geomParams.widthSegments + 1);
       const idx11 = verts.length / 3 - 1;
 
-      this._physijs.corners = [
+      data.corners = [
         verts[idx01 * 3], verts[idx01 * 3 + 1], verts[idx01 * 3 + 2], //   ╗
         verts[idx00 * 3], verts[idx00 * 3 + 1], verts[idx00 * 3 + 2], // ╔
         verts[idx11 * 3], verts[idx11 * 3 + 1], verts[idx11 * 3 + 2], //       ╝
         verts[idx10 * 3], verts[idx10 * 3 + 1], verts[idx10 * 3 + 2], //     ╚
       ];
 
-      this._physijs.segments = [geomParams.widthSegments + 1, geomParams.heightSegments + 1];
+      data.segments = [geomParams.widthSegments + 1, geomParams.heightSegments + 1];
 
       return geom;
-    },
-    onCopy,
-    onWrap
+    });
   }
-};
+
+  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
+    const o1 = this.data.id;
+    const o2 = object.use('physics').data.id;
+
+    this.execute('appendAnchor', {
+      obj: o1,
+      obj2: o2,
+      node,
+      influence,
+      collisionBetweenLinkedBodies
+    });
+  }
+}

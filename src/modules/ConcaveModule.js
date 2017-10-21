@@ -1,40 +1,25 @@
-import {Vector3, MultiMaterial, Mesh, JSONLoader} from 'three';
-import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
+import PhysicsModule from './PhysicsModule';
 
-export class ConcaveModule {
+export class ConcaveModule extends PhysicsModule {
   constructor(params) {
-    this.params = Object.assign({
-      mass: 10,
-      restitution: 0.3,
-      friction: 0.8,
-      damping: 0,
-      scale: new Vector3(1, 1, 1),
-      margin: 0,
-      loader: new JSONLoader()
+    super({
+      type: 'concave',
+      ...PhysicsModule.rigidbody()
     }, params);
 
-    if (this.params.path && this.params.loader) {
-      this.geometryLoader = new Promise((resolve, reject) => {
-        this.params.loader.load(
-          this.params.path,
-          resolve,
-          () => {},
-          reject
-        );
-      });
-    }
+    this.updateData((geometry, {data}) => {
+      data.data = this.geometryProcessor(geometry);
+    });
   }
 
   geometryProcessor(geometry) {
-    const isBuffer = geometry.type === 'BufferGeometry';
-
     if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-    const data = isBuffer ?
+    const data = geometry.isBufferGeometry ?
       geometry.attributes.position.array :
       new Float32Array(geometry.faces.length * 9);
 
-    if (!isBuffer) {
+    if (!geometry.isBufferGeometry) {
       const vertices = geometry.vertices;
 
       for (let i = 0; i < geometry.faces.length; i++) {
@@ -62,45 +47,4 @@ export class ConcaveModule {
 
     return data;
   };
-
-  integrate(self) {
-    const params = self.params;
-
-    this._physijs = {
-      type: 'concave',
-      mass: params.mass,
-      touches: [],
-      linearVelocity: new Vector3(),
-      angularVelocity: new Vector3(),
-      group: params.group,
-      mask: params.mask,
-      friction: params.friction,
-      restitution: params.restitution,
-      damping: params.damping,
-      margin: params.margin,
-      scale: params.scale
-    };
-
-    wrapPhysicsPrototype(this);
-  }
-
-  bridge = {
-    geometry(geometry, self) {
-      if (self.params.path) {
-        this.wait(self.geometryLoader);
-
-        self.geometryLoader
-          .then(geom => {
-            this._physijs.data = self.geometryProcessor(geom)
-          });
-      } else {
-        this._physijs.data = self.geometryProcessor(geometry);
-      }
-
-      return geometry;
-    },
-
-    onCopy,
-    onWrap
-  }
 }

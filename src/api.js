@@ -68,29 +68,31 @@ const convertWorldPositionToObject = (position, object) => {
 const addObjectChildren = function (parent, object) {
   for (let i = 0; i < object.children.length; i++) {
     const child = object.children[i];
-    const _physijs = child.component._physijs;
+    const physics = child.component ? child.component.use('physics') : false;
 
-    if (_physijs) {
+    if (physics) {
+      const data = physics.data;
+
       child.updateMatrix();
       child.updateMatrixWorld();
 
       temp1Vector3.setFromMatrixPosition(child.matrixWorld);
       temp1Quat.setFromRotationMatrix(child.matrixWorld);
 
-      _physijs.position_offset = {
+      data.position_offset = {
         x: temp1Vector3.x,
         y: temp1Vector3.y,
         z: temp1Vector3.z
       };
 
-      _physijs.rotation = {
+      data.rotation = {
         x: temp1Quat.x,
         y: temp1Quat.y,
         z: temp1Quat.z,
         w: temp1Quat.w
       };
 
-      parent.component._physijs.children.push(_physijs);
+      parent.component.use('physics').data.children.push(data);
     }
 
     addObjectChildren(parent, child);

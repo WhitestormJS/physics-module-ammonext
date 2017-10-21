@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "rollup -c -w -m inline",
-    "build": "webpack"
+    "build": "del build/*.js && cross-env NODE_ENV=production rollup -c && npm run minify",
+    "minify": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=VERBOSE --jscomp_off=globalThis --jscomp_off=checkTypes --language_in=ECMASCRIPT6_STRICT --externs tools/build/externs.js --js build/physics-module.js --js_output_file build/physics-module.min.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
     "babel-register": "^6.18.0",
     "del": "^2.2.2",
     "express": "^4.14.0",
+    "google-closure-compiler": "^20170910.0.0",
     "gulp": "^3.9.1",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-commonjs": "^8.2.4",

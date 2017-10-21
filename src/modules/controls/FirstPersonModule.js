@@ -9,11 +9,12 @@ import {
 
 const PI_2 = Math.PI / 2;
 
+// TODO: Fix DOM
 function FirstPersonControlsSolver(camera, mesh, params) {
   const velocityFactor = 1;
   let runVelocity = 0.25;
 
-  mesh.setAngularFactor({x: 0, y: 0, z: 0});
+  mesh.use('physics').setAngularFactor({x: 0, y: 0, z: 0});
   camera.position.set(0, 0, 0);
 
   /* Init */
@@ -37,6 +38,7 @@ function FirstPersonControlsSolver(camera, mesh, params) {
     moveRight = false;
 
   player.on('collision', (otherObject, v, r, contactNormal) => {
+    console.log(contactNormal.y);
     if (contactNormal.y < 0.5) // Use a "good" threshold value between 0 and 1 here!
       canJump = true;
   });
@@ -58,6 +60,8 @@ function FirstPersonControlsSolver(camera, mesh, params) {
 
     pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, pitchObject.rotation.x));
   };
+
+  const physics = player.use('physics');
 
   const onKeyDown = event => {
     switch (event.keyCode) {
@@ -82,7 +86,8 @@ function FirstPersonControlsSolver(camera, mesh, params) {
         break;
 
       case 32: // space
-        if (canJump === true) player.applyCentralImpulse({x: 0, y: 300, z: 0});
+        console.log(canJump);
+        if (canJump === true) physics.applyCentralImpulse({x: 0, y: 300, z: 0});
         canJump = false;
         break;
 
@@ -165,9 +170,9 @@ function FirstPersonControlsSolver(camera, mesh, params) {
 
     inputVelocity.applyQuaternion(quat);
 
-    player.applyCentralImpulse({x: inputVelocity.x, y: 0, z: inputVelocity.z});
-    player.setAngularVelocity({x: inputVelocity.z, y: 0, z: -inputVelocity.x});
-    player.setAngularFactor({x: 0, y: 0, z: 0});
+    physics.applyCentralImpulse({x: inputVelocity.x, y: 0, z: inputVelocity.z});
+    physics.setAngularVelocity({x: inputVelocity.z, y: 0, z: -inputVelocity.x});
+    physics.setAngularFactor({x: 0, y: 0, z: 0});
   };
 
   player.on('physics:added', () => {
@@ -254,7 +259,7 @@ export class FirstPersonModule {
           element.requestFullscreen();
         } else element.requestPointerLock();
       });
-    } else console.warn('Your browser does not support the PointerLock WHS.API.');
+    } else console.warn('Your browser does not support the PointerLock');
 
     manager.get('scene').add(this.controls.getObject());
   }

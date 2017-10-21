@@ -116,6 +116,62 @@ export default class extends API {
     margin: 0
   });
 
+  static softbody = () => ({
+    touches: [],
+    restitution: 0.3,
+    friction: 0.8,
+    damping: 0,
+    scale: new Vector3(1, 1, 1),
+    pressure: 100,
+    margin: 0,
+    klst: 0.9,
+    kvst: 0.9,
+    kast: 0.9,
+    piterations: 1,
+    viterations: 0,
+    diterations: 0,
+    citerations: 4,
+    anchorHardness: 0.7,
+    rigidHardness: 1,
+    isSoftbody: true,
+    isSoftBodyReset: false
+  });
+
+  static rope = () => ({
+    touches: [],
+    friction: 0.8,
+    scale: new Vector3(1, 1, 1),
+    damping: 0,
+    margin: 0,
+    klst: 0.9,
+    kvst: 0.9,
+    kast: 0.9,
+    piterations: 1,
+    viterations: 0,
+    diterations: 0,
+    citerations: 4,
+    anchorHardness: 0.7,
+    rigidHardness: 1,
+    isSoftbody: true
+  });
+
+  static cloth = () => ({
+    touches: [],
+    friction: 0.8,
+    damping: 0,
+    margin: 0,
+    scale: new Vector3(1, 1, 1),
+    klst: 0.9,
+    kvst: 0.9,
+    kast: 0.9,
+    piterations: 1,
+    viterations: 0,
+    diterations: 0,
+    citerations: 4,
+    anchorHardness: 0.7,
+    rigidHardness: 1
+  });
+
   constructor(defaults, data) {
     super();
     this.data = Object.assign(defaults, data);
@@ -137,9 +193,20 @@ export default class extends API {
 
   updateData(callback) {
     this.bridge.geometry = function (geometry, module) {
-      callback(geometry, module);
-      return geometry;
+      if (!callback) return geometry;
+
+      const result = callback(geometry, module);
+      return result ? result : geometry;
     }
+  }
+
+  clone(manager) {
+    const clone = new this.constructor();
+    clone.data = {...this.data};
+    clone.bridge.geometry = this.bridge.geometry;
+    this.manager.apply(clone, [manager]);
+
+    return clone;
   }
 
   bridge = {

@@ -1,69 +1,15 @@
-import {Vector3, BufferGeometry, BufferAttribute} from 'three';
-import {wrapPhysicsPrototype, onCopy, onWrap} from './physicsPrototype';
+import {BufferGeometry, BufferAttribute, Vector3} from 'three';
+import PhysicsModule from './PhysicsModule';
 
-export class RopeModule {
+export class RopeModule extends PhysicsModule {
   constructor(params) {
-    this.params = Object.assign({
-      friction: 0.8,
-      damping: 0,
-      margin: 0,
-      klst: 0.9,
-      kvst: 0.9,
-      kast: 0.9,
-      piterations: 1,
-      viterations: 0,
-      diterations: 0,
-      citerations: 4,
-      anchorHardness: 0.7,
-      rigidHardness: 1
-    }, params);
-  }
-
-  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
-    const o1 = this._physijs.id;
-    const o2 = object._physijs.id;
-
-    if (this.manager.has('module:world')) this.manager.get('module:world').execute('appendAnchor', {
-      obj: o1,
-      obj2: o2,
-      node,
-      influence,
-      collisionBetweenLinkedBodies
-    });
-  }
-
-  integrate(self) {
-    const params = self.params;
-
-    this._physijs = {
+    super({
       type: 'softRopeMesh',
-      mass: params.mass,
-      touches: [],
-      friction: params.friction,
-      damping: params.damping,
-      margin: params.margin,
-      klst: params.klst,
-      isSoftbody: true,
-      kast: params.kast,
-      kvst: params.kvst,
-      drag: params.drag,
-      lift: params.lift,
-      piterations: params.piterations,
-      viterations: params.viterations,
-      diterations: params.diterations,
-      citerations: params.citerations,
-      anchorHardness: params.anchorHardness,
-      rigidHardness: params.rigidHardness
-    };
+      ...PhysicsModule.rope()
+    }, params);
 
-    this.appendAnchor = self.appendAnchor.bind(this);
-
-    wrapPhysicsPrototype(this);
-  }
-
-  bridge = {
-    geometry(geometry) {
-      if (!(geometry instanceof BufferGeometry)) {
+    this.updateData((geometry, {data}) => {
+      if (!geometry.isBufferGeometry) {
         geometry = (() => {
           const buff = new BufferGeometry();
 
@@ -85,16 +31,26 @@ export class RopeModule {
       const v1 = vert(0);
       const v2 = vert(length - 1);
 
-      this._physijs.data = [
+      data.data = [
         v1.x, v1.y, v1.z,
         v2.x, v2.y, v2.z,
         length
       ];
 
       return geometry;
-    },
+    });
+  }
 
-    onCopy,
-    onWrap
+  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
+    const o1 = this.data.id;
+    const o2 = object.use('physics').data.id;
+
+    this.execute('appendAnchor', {
+      obj: o1,
+      obj2: o2,
+      node,
+      influence,
+      collisionBetweenLinkedBodies
+    });
   }
 }

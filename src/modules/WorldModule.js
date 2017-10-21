@@ -214,59 +214,60 @@ export class WorldModule extends Eventable {
     this.dispatchEvent('update');
   }
 
-  updateSoftbodies(data) {
-    let index = data[1],
+  updateSoftbodies(info) {
+    let index = info[1],
       offset = 2;
 
     while (index--) {
-      const size = data[offset + 1];
-      const object = this._objects[data[offset]];
+      const size = info[offset + 1];
+      const object = this._objects[info[offset]];
 
       if (object === null) continue;
 
-      const _physijs = object.component._physijs;
+      const data = object.component.use('physics').data;
 
       const attributes = object.geometry.attributes;
       const volumePositions = attributes.position.array;
 
       const offsetVert = offset + 2;
 
-      if (!_physijs.isSoftBodyReset) {
+      // console.log(data.id);
+      if (!data.isSoftBodyReset) {
         object.position.set(0, 0, 0);
         object.quaternion.set(0, 0, 0, 0);
 
-        _physijs.isSoftBodyReset = true;
+        data.isSoftBodyReset = true;
       }
 
-      if (_physijs.type === "softTrimesh") {
+      if (data.type === "softTrimesh") {
         const volumeNormals = attributes.normal.array;
 
         for (let i = 0; i < size; i++) {
           const offs = offsetVert + i * 18;
 
-          const x1 = data[offs];
-          const y1 = data[offs + 1];
-          const z1 = data[offs + 2];
+          const x1 = info[offs];
+          const y1 = info[offs + 1];
+          const z1 = info[offs + 2];
 
-          const nx1 = data[offs + 3];
-          const ny1 = data[offs + 4];
-          const nz1 = data[offs + 5];
+          const nx1 = info[offs + 3];
+          const ny1 = info[offs + 4];
+          const nz1 = info[offs + 5];
 
-          const x2 = data[offs + 6];
-          const y2 = data[offs + 7];
-          const z2 = data[offs + 8];
+          const x2 = info[offs + 6];
+          const y2 = info[offs + 7];
+          const z2 = info[offs + 8];
 
-          const nx2 = data[offs + 9];
-          const ny2 = data[offs + 10];
-          const nz2 = data[offs + 11];
+          const nx2 = info[offs + 9];
+          const ny2 = info[offs + 10];
+          const nz2 = info[offs + 11];
 
-          const x3 = data[offs + 12];
-          const y3 = data[offs + 13];
-          const z3 = data[offs + 14];
+          const x3 = info[offs + 12];
+          const y3 = info[offs + 13];
+          const z3 = info[offs + 14];
 
-          const nx3 = data[offs + 15];
-          const ny3 = data[offs + 16];
-          const nz3 = data[offs + 17];
+          const nx3 = info[offs + 15];
+          const ny3 = info[offs + 16];
+          const nz3 = info[offs + 17];
 
           const i9 = i * 9;
 
@@ -298,13 +299,13 @@ export class WorldModule extends Eventable {
         attributes.normal.needsUpdate = true;
         offset += 2 + size * 18;
       }
-      else if (_physijs.type === "softRopeMesh") {
+      else if (data.type === "softRopeMesh") {
         for (let i = 0; i < size; i++) {
           const offs = offsetVert + i * 3;
 
-          const x = data[offs];
-          const y = data[offs + 1];
-          const z = data[offs + 2];
+          const x = info[offs];
+          const y = info[offs + 1];
+          const z = info[offs + 2];
 
           volumePositions[i * 3] = x;
           volumePositions[i * 3 + 1] = y;
@@ -318,13 +319,13 @@ export class WorldModule extends Eventable {
         for (let i = 0; i < size; i++) {
           const offs = offsetVert + i * 6;
 
-          const x = data[offs];
-          const y = data[offs + 1];
-          const z = data[offs + 2];
+          const x = info[offs];
+          const y = info[offs + 1];
+          const z = info[offs + 2];
 
-          const nx = data[offs + 3];
-          const ny = data[offs + 4];
-          const nz = data[offs + 5];
+          const nx = info[offs + 3];
+          const ny = info[offs + 4];
+          const nz = info[offs + 5];
 
           volumePositions[i * 3] = x;
           volumePositions[i * 3 + 1] = y;
@@ -344,7 +345,7 @@ export class WorldModule extends Eventable {
     }
 
     // if (this.SUPPORT_TRANSFERABLE)
-    //   this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+    //   this.worker.transferableMessage(info.buffer, [info.buffer]); // Give the typed array back to the worker
 
     this._is_simulating = false;
   }
@@ -405,7 +406,7 @@ export class WorldModule extends Eventable {
       this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
   }
 
-  updateCollisions(data) {
+  updateCollisions(info) {
     /**
      * #TODO
      * This is probably the worst way ever to handle collisions. The inherent evilness is a residual
@@ -418,10 +419,10 @@ export class WorldModule extends Eventable {
       normal_offsets = {};
 
     // Build collision manifest
-    for (let i = 0; i < data[1]; i++) {
+    for (let i = 0; i < info[1]; i++) {
       const offset = 2 + i * COLLISIONREPORT_ITEMSIZE;
-      const object = data[offset];
-      const object2 = data[offset + 1];
+      const object = info[offset];
+      const object2 = info[offset + 1];
 
       normal_offsets[`${object}-${object2}`] = offset + 2;
       normal_offsets[`${object2}-${object}`] = -1 * (offset + 2);
@@ -468,23 +469,25 @@ export class WorldModule extends Eventable {
 
               temp1Vector3.subVectors(vel, vel2);
               const temp1 = temp1Vector3.clone();
+
+              temp1Vector3.subVectors(vel, vel2);
               const temp2 = temp1Vector3.clone();
 
               let normal_offset = normal_offsets[`${data.id}-${data2.id}`];
 
               if (normal_offset > 0) {
                 temp1Vector3.set(
-                  -data[normal_offset],
-                  -data[normal_offset + 1],
-                  -data[normal_offset + 2]
+                  -info[normal_offset],
+                  -info[normal_offset + 1],
+                  -info[normal_offset + 2]
                 );
               } else {
                 normal_offset *= -1;
 
                 temp1Vector3.set(
-                  data[normal_offset],
-                  data[normal_offset + 1],
-                  data[normal_offset + 2]
+                  info[normal_offset],
+                  info[normal_offset + 1],
+                  info[normal_offset + 2]
                 );
               }
 
@@ -498,7 +501,7 @@ export class WorldModule extends Eventable {
     this.collisions = collisions;
 
     if (this.SUPPORT_TRANSFERABLE)
-      this.worker.transferableMessage(data.buffer, [data.buffer]); // Give the typed array back to the worker
+      this.worker.transferableMessage(info.buffer, [info.buffer]); // Give the typed array back to the worker
   }
 
   addConstraint(constraint, show_marker) {
@@ -597,6 +600,7 @@ export class WorldModule extends Eventable {
     if (data) {
       component.manager.set('module:world', this);
       data.id = this.getObjectId();
+      object.component.use('physics').data = data;
 
       if (object instanceof Vehicle) {
         this.onAddCallback(object.mesh);
@@ -612,15 +616,15 @@ export class WorldModule extends Eventable {
           addObjectChildren(object, object);
         }
 
-        if (object.material._physijs) {
-          if (this._materials_ref_counts.hasOwnProperty(object.material._physijs.id))
-            this._materials_ref_counts[object.material._physijs.id]++;
-          else {
-            this.execute('registerMaterial', object.material._physijs);
-            data.materialId = object.material._physijs.id;
-            this._materials_ref_counts[object.material._physijs.id] = 1;
-          }
-        }
+        // if (object.material._physijs) {
+        //   if (this._materials_ref_counts.hasOwnProperty(object.material._physijs.id))
+        //     this._materials_ref_counts[object.material._physijs.id]++;
+        //   else {
+        //     this.execute('registerMaterial', object.material._physijs);
+        //     data.materialId = object.material._physijs.id;
+        //     this._materials_ref_counts[object.material._physijs.id] = 1;
+        //   }
+        // }
 
         // object.quaternion.setFromEuler(object.rotation);
         //

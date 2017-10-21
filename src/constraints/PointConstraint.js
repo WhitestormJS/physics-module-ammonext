@@ -12,11 +12,11 @@ export class PointConstraint {
 
     this.type = 'point';
     this.appliedImpulse = 0;
-    this.objecta = objecta._physijs.id;
+    this.objecta = objecta.use('physics').data.id;
     this.positiona = convertWorldPositionToObject(position, objecta).clone();
 
     if (objectb) {
-      this.objectb = objectb._physijs.id;
+      this.objectb = objectb.use('physics').data.id;
       this.positionb = convertWorldPositionToObject(position, objectb).clone();
     }
   }

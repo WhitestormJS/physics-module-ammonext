@@ -108,10 +108,21 @@ export function wrapPhysicsPrototype(scope) {
 
 export function onCopy(source) {
   wrapPhysicsPrototype(this);
-  this._physijs = {...source._physijs};
+
+  const physics = this.use('physics');
+  const sourcePhysics = source.use('physics');
+
+  this.manager.modules.physics = physics.clone(this.manager);
+
+  physics.data = {...sourcePhysics.data};
+  physics.data.isSoftBodyReset = false;
+  if (physics.data.isSoftbody) physics.data.isSoftBodyReset = false;
+
   this.position = this.position.clone();
   this.rotation = this.rotation.clone();
   this.quaternion = this.quaternion.clone();
+
+  return source;
 }
 
 export function onWrap() {
