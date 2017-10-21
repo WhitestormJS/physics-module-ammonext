@@ -1,4 +1,4 @@
-import PhysicsModule from './PhysicsModule';
+import PhysicsModule from './core/PhysicsModule';
 
 // TODO: Test CapsuleModule in action.
 export class CapsuleModule extends PhysicsModule {

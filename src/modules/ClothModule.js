@@ -1,5 +1,5 @@
 import {BufferGeometry, BufferAttribute} from 'three';
-import PhysicsModule from './PhysicsModule';
+import PhysicsModule from './core/PhysicsModule';
 
 export class ClothModule extends PhysicsModule {
   constructor(params) {

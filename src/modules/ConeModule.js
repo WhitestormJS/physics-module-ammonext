@@ -1,4 +1,4 @@
-import PhysicsModule from './PhysicsModule';
+import PhysicsModule from './core/PhysicsModule';
 
 export class ConeModule extends PhysicsModule {
   constructor(params) {

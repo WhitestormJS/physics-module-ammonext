@@ -1,5 +1,5 @@
 import {BufferGeometry} from 'three';
-import PhysicsModule from './PhysicsModule';
+import PhysicsModule from './core/PhysicsModule';
 
 export class ConvexModule extends PhysicsModule {
   constructor(params) {

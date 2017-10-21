@@ -1,4 +1,4 @@
-import PhysicsModule from './PhysicsModule';
+import PhysicsModule from './core/PhysicsModule';
 import {Vector3, Vector2, BufferGeometry} from 'three';
 
 export class HeightfieldModule extends PhysicsModule {

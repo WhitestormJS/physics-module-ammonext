@@ -30,3 +30,4 @@ var ib=[sH,Om,Lr,qn,pm,nf,gx,Rg,hg,De,Jr,jg,Sh,Ic,rc,zj,cc,dd,Cm,Zi,uf,sH,sH,sH,
 };
 
 Ammo = AmmoLib();
+if (typeof module === 'object' && module.exports) module.exports = Ammo;
