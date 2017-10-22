@@ -1,7 +1,52 @@
-const transferableMessage = self.webkitPostMessage || self.postMessage,
+function Events(target){
+  var events = {}, empty = [];
+  target = target || this
+  /**
+   *  On: listen to events
+   */
+  target.on = function(type, func, ctx){
+    (events[type] = events[type] || []).push([func, ctx])
+    return target
+  }
+  /**
+   *  Off: stop listening to event / specific callback
+   */
+  target.off = function(type, func){
+    type || (events = {})
+    var list = events[type] || empty,
+        i = list.length = func ? list.length : 0;
+    while(i--) func == list[i][0] && list.splice(i,1)
+    return target
+  }
+  /**
+   * Emit: send event, callbacks will be triggered
+   */
+  target.emit = function(type){
+    var e = events[type] || empty, list = e.length > 0 ? e.slice(0, e.length) : e, i=0, j;
+    while(j=list[i++]) j[0].apply(j[1], empty.slice.call(arguments, 1))
+    return target
+  };
+};
 
-// enum
-MESSAGE_TYPES = {
+const insideWorker = !self.document;
+if (!insideWorker) self = new Events();
+
+let send = insideWorker ? (self.webkitPostMessage || self.postMessage) : function(data) {
+  self.emit('message', {data});
+};
+
+self.send = send;
+
+let SUPPORT_TRANSFERABLE;
+
+if (insideWorker) {
+  const ab = new ArrayBuffer(1);
+
+  send(ab, [ab]);
+  SUPPORT_TRANSFERABLE = (ab.byteLength === 0);
+}
+
+const MESSAGE_TYPES = {
   WORLDREPORT: 0,
   COLLISIONREPORT: 1,
   VEHICLEREPORT: 2,
@@ -65,11 +110,6 @@ const WORLDREPORT_ITEMSIZE = 14, // how many float values each reported item nee
   COLLISIONREPORT_ITEMSIZE = 5, // one float for each object id, and a Vec3 contact normal
   VEHICLEREPORT_ITEMSIZE = 9, // vehicle id, wheel index, 3 for position, 4 for rotation
   CONSTRAINTREPORT_ITEMSIZE = 6; // constraint id, offset object, offset, applied impulse
-
-const ab = new ArrayBuffer(1);
-
-transferableMessage(ab, [ab]);
-const SUPPORT_TRANSFERABLE = (ab.byteLength === 0);
 
 const getShapeFromCache = (cache_key) => {
   if (_object_shapes[cache_key] !== undefined)
@@ -310,15 +350,21 @@ const createSoftBody = (description) => {
 };
 
 public_functions.init = (params = {}) => {
+  if (params.noWorker) {
+    window.Ammo = params.ammo;
+    public_functions.makeWorld(params);
+    return;
+  }
+
   if (params.wasmBuffer) {
     importScripts(params.ammo);
 
     self.Ammo = loadAmmoFromBinary(params.wasmBuffer);
-    transferableMessage({cmd: 'ammoLoaded'});
+    send({cmd: 'ammoLoaded'});
     public_functions.makeWorld(params);
   } else {
     importScripts(params.ammo);
-    transferableMessage({cmd: 'ammoLoaded'});
+    send({cmd: 'ammoLoaded'});
     public_functions.makeWorld(params);
   }
 }
@@ -407,7 +453,7 @@ public_functions.makeWorld = (params = {}) => {
 
   if (params.softbody) _softbody_enabled = true;
 
-  transferableMessage({cmd: 'worldReady'});
+  send({cmd: 'worldReady'});
 };
 
 public_functions.setFixedTimeStep = (description) => {
@@ -422,7 +468,6 @@ public_functions.setGravity = (description) => {
 };
 
 public_functions.appendAnchor = (description) => {
-  console.log(_objects[description.obj]);
   _objects[description.obj]
     .appendAnchor(
       description.node,
@@ -583,7 +628,7 @@ public_functions.addObject = (description) => {
   _objects_ammo[body.a === undefined ? body.ptr : body.a] = body.id;
   _num_objects++;
 
-  transferableMessage({cmd: 'objectReady', params: body.id});
+  send({cmd: 'objectReady', params: body.id});
 };
 
 public_functions.addVehicle = (description) => {
@@ -1384,8 +1429,8 @@ const reportWorld = () => {
     }
   }
 
-  if (SUPPORT_TRANSFERABLE) transferableMessage(worldreport.buffer, [worldreport.buffer]);
-  else transferableMessage(worldreport);
+  if (SUPPORT_TRANSFERABLE) send(worldreport.buffer, [worldreport.buffer]);
+  else send(worldreport);
 };
 
 const reportWorld_softbodies = () => {
@@ -1505,9 +1550,9 @@ const reportWorld_softbodies = () => {
     }
   }
 
-  // if (SUPPORT_TRANSFERABLE) transferableMessage(softreport.buffer, [softreport.buffer]);
-  // else transferableMessage(softreport);
-  transferableMessage(softreport);
+  // if (SUPPORT_TRANSFERABLE) send(softreport.buffer, [softreport.buffer]);
+  // else send(softreport);
+  send(softreport);
 };
 
 const reportCollisions = () => {
@@ -1547,12 +1592,12 @@ const reportCollisions = () => {
       collisionreport[offset + 4] = _vector.z();
       break;
       // }
-      // transferableMessage(_objects_ammo);
+      // send(_objects_ammo);
     }
   }
 
-  if (SUPPORT_TRANSFERABLE) transferableMessage(collisionreport.buffer, [collisionreport.buffer]);
-  else transferableMessage(collisionreport);
+  if (SUPPORT_TRANSFERABLE) send(collisionreport.buffer, [collisionreport.buffer]);
+  else send(collisionreport);
 };
 
 const reportVehicles = function () {
@@ -1601,8 +1646,8 @@ const reportVehicles = function () {
       }
     }
 
-    if (SUPPORT_TRANSFERABLE && j !== 0) transferableMessage(vehiclereport.buffer, [vehiclereport.buffer]);
-    else if (j !== 0) transferableMessage(vehiclereport);
+    if (SUPPORT_TRANSFERABLE && j !== 0) send(vehiclereport.buffer, [vehiclereport.buffer]);
+    else if (j !== 0) send(vehiclereport);
   }
 };
 
@@ -1641,8 +1686,8 @@ const reportConstraints = function () {
       }
     }
 
-    if (SUPPORT_TRANSFERABLE && i !== 0) transferableMessage(constraintreport.buffer, [constraintreport.buffer]);
-    else if (i !== 0) transferableMessage(constraintreport);
+    if (SUPPORT_TRANSFERABLE && i !== 0) send(constraintreport.buffer, [constraintreport.buffer]);
+    else if (i !== 0) send(constraintreport);
   }
 };
 
@@ -1672,3 +1717,7 @@ self.onmessage = function (event) {
     return;
   } else if (event.data.cmd && public_functions[event.data.cmd]) public_functions[event.data.cmd](event.data.params);
 };
+
+self.receive = self.onmessage;
+
+export default self;

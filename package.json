@@ -5,8 +5,9 @@
   "main": "build/physics-module.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rollup -c -w -m inline",
-    "build": "del build/*.js && cross-env NODE_ENV=production rollup -c && npm run minify",
+    "start": "npm run build-native-ammo && rollup -c -w -m inline",
+    "build-native-ammo": "node ./scripts/build-native-ammo.js",
+    "build": "npm run build-native-ammo && del build/*.js && cross-env NODE_ENV=production rollup -c && npm run minify",
     "minify": "java -jar node_modules/google-closure-compiler/compiler.jar --warning_level=VERBOSE --jscomp_off=globalThis --jscomp_off=checkTypes --language_in=ECMASCRIPT6_STRICT --externs tools/build/externs.js --js build/physics-module.js --js_output_file build/physics-module.min.js"
   },
   "repository": {
@@ -42,6 +43,7 @@
     "rollup-plugin-commonjs": "^8.2.4",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-livereload": "^0.6.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-serve": "^0.4.2",
@@ -56,6 +58,7 @@
   "dependencies": {
     "ammonext": "0.0.3",
     "rollup-plugin-bundle-worker": "^0.1.0",
+    "rollup-plugin-ignore": "^1.0.3",
     "three": "^0.84.0",
     "whs": "^2.0.0-beta.2"
   }

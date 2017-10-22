@@ -30,7 +30,7 @@ export default function () {
                     `import shimWorker from 'rollup-plugin-bundle-worker';`,
                     `export default new shimWorker(${JSON.stringify(paths.get(id))}, function (window, document) {`,
                     `var self = this;`,
-                    fs.readFileSync(id, 'utf-8'),
+                    fs.readFileSync(id, 'utf-8').replace('export default self;', ''),
                     `\n});`
                 ].join('\n');
 

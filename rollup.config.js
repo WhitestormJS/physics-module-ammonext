@@ -1,4 +1,3 @@
-import path from 'path';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
@@ -8,30 +7,12 @@ import serve from 'rollup-plugin-serve';
 // import bundleWorker from 'rollup-plugin-bundle-worker';
 import bundleWorker from './bundle-worker/index';
 
-// Temporary fix.
-// const babelFix = babelPlugin => {
-//   const oldTransform = babelPlugin.transform;
-//
-//   babelPlugin.transform = (code, id) => {
-//     if (/node_modules/.test(id) || /\.json/.test(id))) {
-//       // Fake path to avoid throwing error.
-//       if (id.indexOf('node_modules') > 0) id = path.resolve(__dirname, './src/file.js');
-//       return oldTransform(code, id);
-//     }
-//
-//     return null;
-//   };
-//
-//   return babelPlugin;
-// };
+let served = false;
 
-export default {
-  entry: 'src/index.js',
-  format: 'umd',
-  // dest: `build/whs.js`, // equivalent to --output
-  moduleName: 'PHYSICS',
+const entryToConfig = (input, dest, native = false) => ({
+  input,
+  name: 'PHYSICS',
   banner: `/* Physics module AmmoNext v${require('./package.json').version} */`,
-  sourceMap: true,
 
   external: [
     'three',
@@ -43,38 +24,68 @@ export default {
     whs: 'WHS'
   },
 
+  context: 'window',
+  moduleContext: 'window',
+
   plugins: [
-    bundleWorker(),
+    ...(native ? [] : [bundleWorker()]),
+    replace({
+      'if (typeof module === \'object\' && module.exports) module.exports = Ammo;': 'export default Ammo;'
+    }),
     resolve({
       jsnext: true,
-      main: true
+      main: true,
+      preferBuiltins: false
     }),
 
-    babel({
-      exclude: 'node_modules'
-    }),
+    // babelFix(
+      babel({
+        exclude: [
+          'node_modules',
+          'vendor/build/ammo.module.js'
+        ]
+      }),
+    // ),
 
     commonjs({include: 'node_modules/**'}),
 
     json({
       preferConst: true
     }),
-    replace({'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)}),
-    ...(process.env.NODE_ENV == 'production' ? [] : [
-      serve({
-        contentBase: ['build', './'],
-        port: 8001
-      })
+
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    }),
+
+    ...(process.env.NODE_ENV == 'production' || served ? [] : [
+      (() => {
+        served = true;
+
+        return serve({
+          contentBase: ['build', './'],
+          port: 8001
+        })
+      })()
     ]),
   ],
 
-  targets: [
+  output: [
     {
-      dest: 'build/physics-module.js'
+      format: 'umd',
+      file: `build/${dest}.js`,
+      sourcemap: true,
+      sourcemapFile: `build/${dest}.js.map`
     },
     {
       format: 'es',
-      dest: 'build/physics-module.module.js'
+      file: `build/${dest}.module.js`,
+      sourcemap: true,
+      sourcemapFile: `build/${dest}.module.js.map`
     }
   ]
-};
+});
+
+export default [
+  entryToConfig('./src/index', 'physics-module'),
+  entryToConfig('./src/native', 'physics-module.native', true)
+];

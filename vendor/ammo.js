@@ -1,3 +1,4 @@
+var cwrap;
 
 // This is ammo.js, a port of Bullet Physics to JavaScript. zlib licensed.
 var AmmoLib = function(AmmoLib) {
@@ -29,5 +30,5 @@ var ib=[sH,Om,Lr,qn,pm,nf,gx,Rg,hg,De,Jr,jg,Sh,Ic,rc,zj,cc,dd,Cm,Zi,uf,sH,sH,sH,
   return AmmoLib;
 };
 
-Ammo = AmmoLib();
+Ammo = AmmoLib.bind(this)();
 if (typeof module === 'object' && module.exports) module.exports = Ammo;
