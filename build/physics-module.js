@@ -1911,7 +1911,7 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
     var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
     if (params.noWorker) {
-      window.Ammo = params.ammo;
+      window.Ammo = new params.ammo();
       public_functions.makeWorld(params);
       return;
     }
@@ -1919,12 +1919,14 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
     if (params.wasmBuffer) {
       importScripts(params.ammo);
 
-      self.Ammo = loadAmmoFromBinary(params.wasmBuffer);
+      self.Ammo = new loadAmmoFromBinary(params.wasmBuffer)();
       send({ cmd: 'ammoLoaded' });
       public_functions.makeWorld(params);
     } else {
       importScripts(params.ammo);
       send({ cmd: 'ammoLoaded' });
+
+      self.Ammo = new Ammo();
       public_functions.makeWorld(params);
     }
   };
@@ -3660,7 +3662,6 @@ var CompoundModule = function (_PhysicsModule) {
   return CompoundModule;
 }(_default);
 
-// TODO: Test CapsuleModule in action.
 var CapsuleModule = function (_PhysicsModule) {
   inherits(CapsuleModule, _PhysicsModule);
 

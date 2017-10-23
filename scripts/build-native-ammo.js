@@ -4,7 +4,9 @@ const path = require('path');
 const ammoFile = fs.readFileSync(path.resolve(__dirname, '../vendor/ammo.js'), 'utf8');
 
 const ammoEs6 = ammoFile.replace(
-  `if (typeof module === 'object' && module.exports) module.exports = Ammo;`,
+`if (typeof module === "object" && module.exports) {
+  module['exports'] = Ammo;
+};`,
   'export default Ammo;'
 );
 

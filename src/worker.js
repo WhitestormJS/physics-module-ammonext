@@ -351,7 +351,7 @@ const createSoftBody = (description) => {
 
 public_functions.init = (params = {}) => {
   if (params.noWorker) {
-    window.Ammo = params.ammo;
+    window.Ammo = new params.ammo();
     public_functions.makeWorld(params);
     return;
   }
@@ -359,12 +359,14 @@ public_functions.init = (params = {}) => {
   if (params.wasmBuffer) {
     importScripts(params.ammo);
 
-    self.Ammo = loadAmmoFromBinary(params.wasmBuffer);
+    self.Ammo = new loadAmmoFromBinary(params.wasmBuffer)();
     send({cmd: 'ammoLoaded'});
     public_functions.makeWorld(params);
   } else {
     importScripts(params.ammo);
     send({cmd: 'ammoLoaded'});
+
+    self.Ammo = new Ammo();
     public_functions.makeWorld(params);
   }
 }
