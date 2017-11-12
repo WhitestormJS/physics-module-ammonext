@@ -1,29 +1,33 @@
-function Events(target){
-  var events = {}, empty = [];
+function Events(target) {
+  var events = {},
+    empty = [];
   target = target || this
   /**
    *  On: listen to events
    */
-  target.on = function(type, func, ctx){
+  target.on = function (type, func, ctx) {
     (events[type] = events[type] || []).push([func, ctx])
     return target
   }
   /**
    *  Off: stop listening to event / specific callback
    */
-  target.off = function(type, func){
+  target.off = function (type, func) {
     type || (events = {})
     var list = events[type] || empty,
-        i = list.length = func ? list.length : 0;
-    while(i--) func == list[i][0] && list.splice(i,1)
+      i = list.length = func ? list.length : 0;
+    while (i--) func == list[i][0] && list.splice(i, 1)
     return target
   }
   /**
    * Emit: send event, callbacks will be triggered
    */
-  target.emit = function(type){
-    var e = events[type] || empty, list = e.length > 0 ? e.slice(0, e.length) : e, i=0, j;
-    while(j=list[i++]) j[0].apply(j[1], empty.slice.call(arguments, 1))
+  target.emit = function (type) {
+    var e = events[type] || empty,
+      list = e.length > 0 ? e.slice(0, e.length) : e,
+      i = 0,
+      j;
+    while (j = list[i++]) j[0].apply(j[1], empty.slice.call(arguments, 1))
     return target
   };
 };
@@ -31,8 +35,8 @@ function Events(target){
 const insideWorker = !self.document;
 if (!insideWorker) self = new Events();
 
-let send = insideWorker ? (self.webkitPostMessage || self.postMessage) : function(data) {
-  self.emit('message', {data});
+let send = insideWorker ? (self.webkitPostMessage || self.postMessage) : function (data) {
+  self.emit('message', { data });
 };
 
 self.send = send;
@@ -54,7 +58,7 @@ const MESSAGE_TYPES = {
   SOFTREPORT: 4
 };
 
-  // temp variables
+// temp variables
 let _object,
   _vector,
   _transform,
@@ -79,7 +83,7 @@ let _object,
   _vec3_3,
   _quat;
 
-  // private cache
+// private cache
 const public_functions = {},
   _objects = [],
   _vehicles = [],
@@ -98,7 +102,7 @@ const public_functions = {},
   // have track them separately.
   _compound_shapes = {};
 
-  // object reporting
+// object reporting
 let REPORT_CHUNKSIZE, // report array is increased in increments of this chunk size
   worldreport,
   softreport,
@@ -127,12 +131,14 @@ const createShape = (description) => {
 
   _transform.setIdentity();
   switch (description.type) {
-    case 'compound': {
+  case 'compound':
+    {
       shape = new Ammo.btCompoundShape();
 
       break;
     }
-    case 'plane': {
+  case 'plane':
+    {
       const cache_key = `plane_${description.normal.x}_${description.normal.y}_${description.normal.z}`;
 
       if ((shape = getShapeFromCache(cache_key)) === null) {
@@ -145,7 +151,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'box': {
+  case 'box':
+    {
       const cache_key = `box_${description.width}_${description.height}_${description.depth}`;
 
       if ((shape = getShapeFromCache(cache_key)) === null) {
@@ -158,7 +165,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'sphere': {
+  case 'sphere':
+    {
       const cache_key = `sphere_${description.radius}`;
 
       if ((shape = getShapeFromCache(cache_key)) === null) {
@@ -168,7 +176,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'cylinder': {
+  case 'cylinder':
+    {
       const cache_key = `cylinder_${description.width}_${description.height}_${description.depth}`;
 
       if ((shape = getShapeFromCache(cache_key)) === null) {
@@ -181,7 +190,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'capsule': {
+  case 'capsule':
+    {
       const cache_key = `capsule_${description.radius}_${description.height}`;
 
       if ((shape = getShapeFromCache(cache_key)) === null) {
@@ -192,7 +202,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'cone': {
+  case 'cone':
+    {
       const cache_key = `cone_${description.radius}_${description.height}`;
 
       if ((shape = getShapeFromCache(cache_key)) === null) {
@@ -202,7 +213,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'concave': {
+  case 'concave':
+    {
       const triangle_mesh = new Ammo.btTriangleMesh();
       if (!description.data.length) return false;
       const data = description.data;
@@ -238,12 +250,13 @@ const createShape = (description) => {
 
       break;
     }
-    case 'convex': {
+  case 'convex':
+    {
       shape = new Ammo.btConvexHullShape();
       const data = description.data;
 
       for (let i = 0; i < data.length / 3; i++) {
-        _vec3_1.setX(data[i * 3 ]);
+        _vec3_1.setX(data[i * 3]);
         _vec3_1.setY(data[i * 3 + 1]);
         _vec3_1.setZ(data[i * 3 + 2]);
 
@@ -254,7 +267,8 @@ const createShape = (description) => {
 
       break;
     }
-    case 'heightfield': {
+  case 'heightfield':
+    {
       const xpts = description.xpts,
         ypts = description.ypts,
         points = description.points,
@@ -273,8 +287,7 @@ const createShape = (description) => {
         description.xpts,
         description.ypts,
         ptr,
-        1,
-        -description.absMaxHeight,
+        1, -description.absMaxHeight,
         description.absMaxHeight,
         1,
         'PHY_FLOAT',
@@ -284,9 +297,9 @@ const createShape = (description) => {
       _noncached_shapes[description.id] = shape;
       break;
     }
-    default:
-      // Not recognized
-      return;
+  default:
+    // Not recognized
+    return;
   }
 
   return shape;
@@ -298,7 +311,8 @@ const createSoftBody = (description) => {
   const softBodyHelpers = new Ammo.btSoftBodyHelpers();
 
   switch (description.type) {
-    case 'softTrimesh': {
+  case 'softTrimesh':
+    {
       if (!description.aVertices.length) return false;
 
       body = softBodyHelpers.CreateFromTriMesh(
@@ -311,7 +325,8 @@ const createSoftBody = (description) => {
 
       break;
     }
-    case 'softClothMesh': {
+  case 'softClothMesh':
+    {
       const cr = description.corners;
 
       body = softBodyHelpers.CreatePatch(
@@ -328,7 +343,8 @@ const createSoftBody = (description) => {
 
       break;
     }
-    case 'softRopeMesh': {
+  case 'softRopeMesh':
+    {
       const data = description.data;
 
       body = softBodyHelpers.CreateRope(
@@ -341,9 +357,9 @@ const createSoftBody = (description) => {
 
       break;
     }
-    default:
-      // Not recognized
-      return;
+  default:
+    // Not recognized
+    return;
   }
 
   return body;
@@ -360,11 +376,12 @@ public_functions.init = (params = {}) => {
     importScripts(params.ammo);
 
     self.Ammo = new loadAmmoFromBinary(params.wasmBuffer)();
-    send({cmd: 'ammoLoaded'});
+    send({ cmd: 'ammoLoaded' });
     public_functions.makeWorld(params);
-  } else {
+  }
+  else {
     importScripts(params.ammo);
-    send({cmd: 'ammoLoaded'});
+    send({ cmd: 'ammoLoaded' });
 
     self.Ammo = new Ammo();
     public_functions.makeWorld(params);
@@ -387,7 +404,8 @@ public_functions.makeWorld = (params = {}) => {
     collisionreport = new Float32Array(2 + REPORT_CHUNKSIZE * COLLISIONREPORT_ITEMSIZE); // message id + # of collisions to report + chunk size * # of values per object
     vehiclereport = new Float32Array(2 + REPORT_CHUNKSIZE * VEHICLEREPORT_ITEMSIZE); // message id + # of vehicles to report + chunk size * # of values per object
     constraintreport = new Float32Array(2 + REPORT_CHUNKSIZE * CONSTRAINTREPORT_ITEMSIZE); // message id + # of constraints to report + chunk size * # of values per object
-  } else {
+  }
+  else {
     // Transferable messages are not supported, send data as normal arrays
     worldreport = [];
     collisionreport = [];
@@ -400,15 +418,15 @@ public_functions.makeWorld = (params = {}) => {
   vehiclereport[0] = MESSAGE_TYPES.VEHICLEREPORT;
   constraintreport[0] = MESSAGE_TYPES.CONSTRAINTREPORT;
 
-  const collisionConfiguration = params.softbody
-    ? new Ammo.btSoftBodyRigidBodyCollisionConfiguration()
-    : new Ammo.btDefaultCollisionConfiguration(),
+  const collisionConfiguration = params.softbody ?
+    new Ammo.btSoftBodyRigidBodyCollisionConfiguration() :
+    new Ammo.btDefaultCollisionConfiguration(),
     dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration),
     solver = new Ammo.btSequentialImpulseConstraintSolver();
 
   let broadphase;
 
-  if (!params.broadphase) params.broadphase = {type: 'dynamic'};
+  if (!params.broadphase) params.broadphase = { type: 'dynamic' };
   // TODO!!!
   /* if (params.broadphase.type === 'sweepprune') {
     extend(params.broadphase, {
@@ -427,35 +445,35 @@ public_functions.makeWorld = (params = {}) => {
   }*/
 
   switch (params.broadphase.type) {
-    case 'sweepprune':
-      _vec3_1.setX(params.broadphase.aabbmin.x);
-      _vec3_1.setY(params.broadphase.aabbmin.y);
-      _vec3_1.setZ(params.broadphase.aabbmin.z);
+  case 'sweepprune':
+    _vec3_1.setX(params.broadphase.aabbmin.x);
+    _vec3_1.setY(params.broadphase.aabbmin.y);
+    _vec3_1.setZ(params.broadphase.aabbmin.z);
 
-      _vec3_2.setX(params.broadphase.aabbmax.x);
-      _vec3_2.setY(params.broadphase.aabbmax.y);
-      _vec3_2.setZ(params.broadphase.aabbmax.z);
+    _vec3_2.setX(params.broadphase.aabbmax.x);
+    _vec3_2.setY(params.broadphase.aabbmax.y);
+    _vec3_2.setZ(params.broadphase.aabbmax.z);
 
-      broadphase = new Ammo.btAxisSweep3(
-        _vec3_1,
-        _vec3_2
-      );
+    broadphase = new Ammo.btAxisSweep3(
+      _vec3_1,
+      _vec3_2
+    );
 
-      break;
-    case 'dynamic':
-    default:
-      broadphase = new Ammo.btDbvtBroadphase();
-      break;
+    break;
+  case 'dynamic':
+  default:
+    broadphase = new Ammo.btDbvtBroadphase();
+    break;
   }
 
-  world = params.softbody
-    ? new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, new Ammo.btDefaultSoftBodySolver())
-    : new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+  world = params.softbody ?
+    new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration, new Ammo.btDefaultSoftBodySolver()) :
+    new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
   fixedTimeStep = params.fixedTimeStep;
 
   if (params.softbody) _softbody_enabled = true;
 
-  send({cmd: 'worldReady'});
+  send({ cmd: 'worldReady' });
 };
 
 public_functions.setFixedTimeStep = (description) => {
@@ -540,7 +558,8 @@ public_functions.addObject = (description) => {
     else _softbody_report_size += body.get_m_nodes().size() * 3;
 
     _num_softbody_objects++;
-  } else {
+  }
+  else {
     let shape = createShape(description);
 
     if (!shape) return;
@@ -630,7 +649,7 @@ public_functions.addObject = (description) => {
   _objects_ammo[body.a === undefined ? body.ptr : body.a] = body.id;
   _num_objects++;
 
-  send({cmd: 'objectReady', params: body.id});
+  send({ cmd: 'objectReady', params: body.id });
 };
 
 public_functions.addVehicle = (description) => {
@@ -699,7 +718,8 @@ public_functions.addWheel = (description) => {
   if (SUPPORT_TRANSFERABLE) {
     vehiclereport = new Float32Array(1 + _num_wheels * VEHICLEREPORT_ITEMSIZE); // message id & ( # of objects to report * # of values per object )
     vehiclereport[0] = MESSAGE_TYPES.VEHICLEREPORT;
-  } else vehiclereport = [MESSAGE_TYPES.VEHICLEREPORT];
+  }
+  else vehiclereport = [MESSAGE_TYPES.VEHICLEREPORT];
 };
 
 public_functions.setSteering = (details) => {
@@ -719,7 +739,8 @@ public_functions.removeObject = (details) => {
     _num_softbody_objects--;
     _softbody_report_size -= _objects[details.id].get_m_nodes().size();
     world.removeSoftBody(_objects[details.id]);
-  } else if (_objects[details.id].type === 1) {
+  }
+  else if (_objects[details.id].type === 1) {
     _num_rigidbody_objects--;
     world.removeRigidBody(_objects[details.id]);
     Ammo.destroy(_motion_states[details.id]);
@@ -761,7 +782,8 @@ public_functions.updateTransform = (details) => {
 
     _object.setWorldTransform(_transform);
     _object.activate();
-  } else if (_object.type === 0) {
+  }
+  else if (_object.type === 0) {
     // _object.getWorldTransform(_transform);
 
     if (details.pos) {
@@ -892,7 +914,7 @@ public_functions.setAngularFactor = (details) => {
   _vec3_1.setZ(details.z);
 
   _objects[details.id].setAngularFactor(
-      _vec3_1
+    _vec3_1
   );
 };
 
@@ -923,7 +945,8 @@ public_functions.addConstraint = (details) => {
 
   switch (details.type) {
 
-    case 'point': {
+  case 'point':
+    {
       if (details.objectb === undefined) {
         _vec3_1.setX(details.positiona.x);
         _vec3_1.setY(details.positiona.y);
@@ -933,7 +956,8 @@ public_functions.addConstraint = (details) => {
           _objects[details.objecta],
           _vec3_1
         );
-      } else {
+      }
+      else {
         _vec3_1.setX(details.positiona.x);
         _vec3_1.setY(details.positiona.y);
         _vec3_1.setZ(details.positiona.z);
@@ -951,7 +975,8 @@ public_functions.addConstraint = (details) => {
       }
       break;
     }
-    case 'hinge': {
+  case 'hinge':
+    {
       if (details.objectb === undefined) {
         _vec3_1.setX(details.positiona.x);
         _vec3_1.setY(details.positiona.y);
@@ -967,7 +992,8 @@ public_functions.addConstraint = (details) => {
           _vec3_2
         );
 
-      } else {
+      }
+      else {
         _vec3_1.setX(details.positiona.x);
         _vec3_1.setY(details.positiona.y);
         _vec3_1.setZ(details.positiona.z);
@@ -991,7 +1017,8 @@ public_functions.addConstraint = (details) => {
       }
       break;
     }
-    case 'slider': {
+  case 'slider':
+    {
       let transformb;
       const transforma = new Ammo.btTransform();
 
@@ -1025,7 +1052,8 @@ public_functions.addConstraint = (details) => {
           transformb,
           true
         );
-      } else {
+      }
+      else {
         constraint = new Ammo.btSliderConstraint(
           _objects[details.objecta],
           transforma,
@@ -1041,7 +1069,8 @@ public_functions.addConstraint = (details) => {
 
       break;
     }
-    case 'conetwist': {
+  case 'conetwist':
+    {
       const transforma = new Ammo.btTransform();
       transforma.setIdentity();
 
@@ -1084,7 +1113,8 @@ public_functions.addConstraint = (details) => {
 
       break;
     }
-    case 'dof': {
+  case 'dof':
+    {
       let transformb;
 
       const transforma = new Ammo.btTransform();
@@ -1121,7 +1151,8 @@ public_functions.addConstraint = (details) => {
           transformb,
           true
         );
-      } else {
+      }
+      else {
         constraint = new Ammo.btGeneric6DofConstraint(
           _objects[details.objecta],
           transforma,
@@ -1137,8 +1168,8 @@ public_functions.addConstraint = (details) => {
 
       break;
     }
-    default:
-      return;
+  default:
+    return;
   }
 
   world.addConstraint(constraint);
@@ -1153,7 +1184,8 @@ public_functions.addConstraint = (details) => {
   if (SUPPORT_TRANSFERABLE) {
     constraintreport = new Float32Array(1 + _num_constraints * CONSTRAINTREPORT_ITEMSIZE); // message id & ( # of objects to report * # of values per object )
     constraintreport[0] = MESSAGE_TYPES.CONSTRAINTREPORT;
-  } else constraintreport = [MESSAGE_TYPES.CONSTRAINTREPORT];
+  }
+  else constraintreport = [MESSAGE_TYPES.CONSTRAINTREPORT];
 };
 
 public_functions.removeConstraint = (details) => {
@@ -1168,7 +1200,7 @@ public_functions.removeConstraint = (details) => {
 
 public_functions.constraint_setBreakingImpulseThreshold = (details) => {
   const constraint = _constraints[details.id];
-  if (constraint !== undefind) constraint.setBreakingImpulseThreshold(details.threshold);
+  if (constraint !== undefined) constraint.setBreakingImpulseThreshold(details.threshold);
 };
 
 public_functions.simulate = (params = {}) => {
@@ -1378,8 +1410,9 @@ public_functions.dof_disableAngularMotor = (params) => {
 const reportWorld = () => {
   if (SUPPORT_TRANSFERABLE && worldreport.length < 2 + _num_rigidbody_objects * WORLDREPORT_ITEMSIZE) {
     worldreport = new Float32Array(
-      2// message id & # objects in report
-      + (Math.ceil(_num_rigidbody_objects / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * WORLDREPORT_ITEMSIZE // # of values needed * item size
+      2 // message id & # objects in report
+      +
+      (Math.ceil(_num_rigidbody_objects / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * WORLDREPORT_ITEMSIZE // # of values needed * item size
     );
 
     worldreport[0] = MESSAGE_TYPES.WORLDREPORT;
@@ -1440,8 +1473,9 @@ const reportWorld_softbodies = () => {
 
   softreport = new Float32Array(
     2 // message id & # objects in report
-    + _num_softbody_objects * 2
-    + _softbody_report_size * 6
+    +
+    _num_softbody_objects * 2 +
+    _softbody_report_size * 6
   );
 
   softreport[0] = MESSAGE_TYPES.SOFTREPORT;
@@ -1560,13 +1594,14 @@ const reportWorld_softbodies = () => {
 const reportCollisions = () => {
   const dp = world.getDispatcher(),
     num = dp.getNumManifolds();
-    // _collided = false;
+  // _collided = false;
 
   if (SUPPORT_TRANSFERABLE) {
     if (collisionreport.length < 2 + num * COLLISIONREPORT_ITEMSIZE) {
       collisionreport = new Float32Array(
         2 // message id & # objects in report
-        + (Math.ceil(_num_objects / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * COLLISIONREPORT_ITEMSIZE // # of values needed * item size
+        +
+        (Math.ceil(_num_objects / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * COLLISIONREPORT_ITEMSIZE // # of values needed * item size
       );
       collisionreport[0] = MESSAGE_TYPES.COLLISIONREPORT;
     }
@@ -1607,7 +1642,8 @@ const reportVehicles = function () {
     if (vehiclereport.length < 2 + _num_wheels * VEHICLEREPORT_ITEMSIZE) {
       vehiclereport = new Float32Array(
         2 // message id & # objects in report
-        + (Math.ceil(_num_wheels / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * VEHICLEREPORT_ITEMSIZE // # of values needed * item size
+        +
+        (Math.ceil(_num_wheels / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * VEHICLEREPORT_ITEMSIZE // # of values needed * item size
       );
       vehiclereport[0] = MESSAGE_TYPES.VEHICLEREPORT;
     }
@@ -1658,7 +1694,8 @@ const reportConstraints = function () {
     if (constraintreport.length < 2 + _num_constraints * CONSTRAINTREPORT_ITEMSIZE) {
       constraintreport = new Float32Array(
         2 // message id & # objects in report
-        + (Math.ceil(_num_constraints / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * CONSTRAINTREPORT_ITEMSIZE // # of values needed * item size
+        +
+        (Math.ceil(_num_constraints / REPORT_CHUNKSIZE) * REPORT_CHUNKSIZE) * CONSTRAINTREPORT_ITEMSIZE // # of values needed * item size
       );
       constraintreport[0] = MESSAGE_TYPES.CONSTRAINTREPORT;
     }
@@ -1697,27 +1734,32 @@ self.onmessage = function (event) {
   if (event.data instanceof Float32Array) {
     // transferable object
     switch (event.data[0]) {
-      case MESSAGE_TYPES.WORLDREPORT: {
+    case MESSAGE_TYPES.WORLDREPORT:
+      {
         worldreport = new Float32Array(event.data);
         break;
       }
-      case MESSAGE_TYPES.COLLISIONREPORT: {
+    case MESSAGE_TYPES.COLLISIONREPORT:
+      {
         collisionreport = new Float32Array(event.data);
         break;
       }
-      case MESSAGE_TYPES.VEHICLEREPORT: {
+    case MESSAGE_TYPES.VEHICLEREPORT:
+      {
         vehiclereport = new Float32Array(event.data);
         break;
       }
-      case MESSAGE_TYPES.CONSTRAINTREPORT: {
+    case MESSAGE_TYPES.CONSTRAINTREPORT:
+      {
         constraintreport = new Float32Array(event.data);
         break;
       }
-      default:
+    default:
     }
 
     return;
-  } else if (event.data.cmd && public_functions[event.data.cmd]) public_functions[event.data.cmd](event.data.params);
+  }
+  else if (event.data.cmd && public_functions[event.data.cmd]) public_functions[event.data.cmd](event.data.params);
 };
 
 self.receive = self.onmessage;
