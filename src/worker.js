@@ -1168,7 +1168,7 @@ public_functions.removeConstraint = (details) => {
 
 public_functions.constraint_setBreakingImpulseThreshold = (details) => {
   const constraint = _constraints[details.id];
-  if (constraint !== undefind) constraint.setBreakingImpulseThreshold(details.threshold);
+  if (constraint !== undefined) constraint.setBreakingImpulseThreshold(details.threshold);
 };
 
 public_functions.simulate = (params = {}) => {
