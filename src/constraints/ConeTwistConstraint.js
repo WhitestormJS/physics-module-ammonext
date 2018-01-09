@@ -42,7 +42,7 @@ export class ConeTwistConstraint {
 
   setMaxMotorImpulse(max_impulse) {
     if(this.worldModule) this.worldModule.execute('conetwist_setMaxMotorImpulse', {constraint: this.id, max_impulse});
-  }  
+  }
 
   setMotorTarget(target) {
     if (target instanceof Vector3)
