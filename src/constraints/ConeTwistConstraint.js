@@ -1,4 +1,5 @@
-import {convertWorldPositionToObject} from '../api';
+import { convertWorldPositionToObject } from '../api';
+import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 
 export class ConeTwistConstraint {
   constructor(obja, objb, position) {
@@ -41,15 +42,15 @@ export class ConeTwistConstraint {
 
   setMaxMotorImpulse(max_impulse) {
     if(this.worldModule) this.worldModule.execute('conetwist_setMaxMotorImpulse', {constraint: this.id, max_impulse});
-  }
+  }  
 
   setMotorTarget(target) {
-    if (target instanceof THREE.Vector3)
-      target = new THREE.Quaternion().setFromEuler(new THREE.Euler(target.x, target.y, target.z));
-    else if (target instanceof THREE.Euler)
-      target = new THREE.Quaternion().setFromEuler(target);
-    else if (target instanceof THREE.Matrix4)
-      target = new THREE.Quaternion().setFromRotationMatrix(target);
+    if (target instanceof Vector3)
+      target = new Quaternion().setFromEuler(new Euler(target.x, target.y, target.z));
+    else if (target instanceof Euler)
+      target = new Quaternion().setFromEuler(target);
+    else if (target instanceof Matrix4)
+      target = new Quaternion().setFromRotationMatrix(target);
 
     if(this.worldModule) this.worldModule.execute('conetwist_setMotorTarget', {
       constraint: this.id,
