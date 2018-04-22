@@ -424,7 +424,7 @@ var ConeTwistConstraint = function () {
   }, {
     key: 'setMotorTarget',
     value: function setMotorTarget(target) {
-      if (target instanceof THREE.Vector3) target = new THREE.Quaternion().setFromEuler(new THREE.Euler(target.x, target.y, target.z));else if (target instanceof THREE.Euler) target = new THREE.Quaternion().setFromEuler(target);else if (target instanceof THREE.Matrix4) target = new THREE.Quaternion().setFromRotationMatrix(target);
+      if (target instanceof three.Vector3) target = new three.Quaternion().setFromEuler(new three.Euler(target.x, target.y, target.z));else if (target instanceof three.Euler) target = new three.Quaternion().setFromEuler(target);else if (target instanceof three.Matrix4) target = new three.Quaternion().setFromRotationMatrix(target);
 
       if (this.worldModule) this.worldModule.execute('conetwist_setMotorTarget', {
         constraint: this.id,
@@ -1180,10 +1180,10 @@ var WorldModuleBase = (_temp2 = _class = function (_Eventable) {
           for (var _j = 0; _j < collisions[id1].length; _j++) {
             var id2 = collisions[id1][_j];
             var _object2 = this.objects[id2];
-            var component2 = _object2.component;
-            var data2 = component2.use('physics').data;
 
             if (_object2) {
+              var component2 = _object2.component;
+              var data2 = component2.use('physics').data;
               // If object was not already touching object2, notify object
               if (data.touches.indexOf(id2) === -1) {
                 data.touches.push(id2);
@@ -1387,6 +1387,7 @@ var WorldModuleBase = (_temp2 = _class = function (_Eventable) {
   }, {
     key: 'manager',
     value: function manager(_manager) {
+      _manager.define('physics');
       _manager.set('physicsWorker', this.worker);
     }
   }, {
@@ -1472,6 +1473,7 @@ var WorldModuleBase = (_temp2 = _class = function (_Eventable) {
 
         self.simulateLoop.start(_this4);
 
+        console.log(self.options.gravity);
         _this4.setGravity(self.options.gravity);
       });
     }
@@ -1482,7 +1484,7 @@ var WorldModuleBase = (_temp2 = _class = function (_Eventable) {
   rateLimit: true,
   ammo: "",
   softbody: false,
-  gravity: new three.Vector3(0, -100, 0)
+  gravity: new three.Vector3(0, 100, 0)
 }, _temp2);
 
 var TARGET = typeof Symbol === 'undefined' ? '__target' : Symbol();
@@ -2072,6 +2074,8 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
 
         console.log('link!');
 
+        // console.log(self_vec);
+
         _vec3_1.setX(0);
         _vec3_1.setY(0);
         _vec3_1.setZ(0);
@@ -2079,39 +2083,13 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
         self_body.setVelocity(_vec3_1);
 
         other_body.setVelocity(_vec3_1);
+      } else if (linked) {
 
-        // self_body.addVelocity(_vec3_1);
-        // other_body.addVelocity(_vec3_2);
+        self_vec.setX(other_vec.x());
+        self_vec.setY(other_vec.y());
+        self_vec.setZ(other_vec.z());
 
-        // self_relative_x = self_node.x();
-        // self_relative_y = self_node.y();
-        // self_relative_z = self_node.z();
-        //
-        // other_relative_x = other_node.x();
-        // other_relative_y = other_node.y();
-        // other_relative_z = other_node.z();
-
-        // self_relative = new Ammo.btVector3();
-        // self_relative.setX();
-
-        // console.log('link!');
-        // self_body.appendAnchor(description.n1, connector, true, 0.5);
-        // other_body.appendAnchor(description.n2, connector, true, 0.5);
-        // clearInterval(_loop);
-
-        // _vec3_1.setX(0);
-        // _vec3_1.setY(0);
-        // _vec3_1.setZ(0);
-
-        // self_body.setVelocity(_vec3_1);
-        // other_body.setVelocity(_vec3_1);
-
-        // other_body.addForce(
-        //   _vec3_2,
-        //   description.n2
-        // );
-
-        // description.modifier *= 1.6;
+        return;
       }
 
       var modifer2 = linked ? 40 : 1;
@@ -2131,24 +2109,6 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
       self_body.addVelocity(_vec3_1, description.n1);
 
       other_body.addVelocity(_vec3_2, description.n2);
-
-      // } else {
-      //   // self_relative_x = null;
-      // }
-
-
-      // if (self_relative_x) {
-      //   _vec3_1.setX(self_relative_x - self_node.x());
-      //   _vec3_1.setY(self_relative_y - self_node.y());
-      //   _vec3_1.setZ(self_relative_z - self_node.z());
-      //
-      //   _vec3_2.setX(other_relative_x - other_node.x());
-      //   _vec3_2.setY(other_relative_y - other_node.y());
-      //   _vec3_2.setZ(other_relative_z - other_node.z());
-      // } else {
-
-      // }
-
 
       cached_distance = distance;
     }, 10);

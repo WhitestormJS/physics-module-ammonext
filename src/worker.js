@@ -541,6 +541,8 @@ public_functions.linkNodes = (description) => {
 
       console.log('link!');
 
+      // console.log(self_vec);
+
       _vec3_1.setX(0);
       _vec3_1.setY(0);
       _vec3_1.setZ(0);
@@ -552,41 +554,13 @@ public_functions.linkNodes = (description) => {
       other_body.setVelocity(
         _vec3_1
       );
+    } else if (linked) {
 
+      self_vec.setX(other_vec.x());
+      self_vec.setY(other_vec.y());
+      self_vec.setZ(other_vec.z());
 
-
-      // self_body.addVelocity(_vec3_1);
-      // other_body.addVelocity(_vec3_2);
-
-      // self_relative_x = self_node.x();
-      // self_relative_y = self_node.y();
-      // self_relative_z = self_node.z();
-      //
-      // other_relative_x = other_node.x();
-      // other_relative_y = other_node.y();
-      // other_relative_z = other_node.z();
-
-      // self_relative = new Ammo.btVector3();
-      // self_relative.setX();
-
-      // console.log('link!');
-      // self_body.appendAnchor(description.n1, connector, true, 0.5);
-      // other_body.appendAnchor(description.n2, connector, true, 0.5);
-      // clearInterval(_loop);
-
-      // _vec3_1.setX(0);
-      // _vec3_1.setY(0);
-      // _vec3_1.setZ(0);
-
-      // self_body.setVelocity(_vec3_1);
-      // other_body.setVelocity(_vec3_1);
-
-      // other_body.addForce(
-      //   _vec3_2,
-      //   description.n2
-      // );
-
-      // description.modifier *= 1.6;
+      return;
     }
 
     const modifer2 = linked ? 40 : 1;
@@ -612,27 +586,6 @@ public_functions.linkNodes = (description) => {
       _vec3_2,
       description.n2
     );
-
-    // } else {
-    //   // self_relative_x = null;
-    // }
-
-
-
-    // if (self_relative_x) {
-    //   _vec3_1.setX(self_relative_x - self_node.x());
-    //   _vec3_1.setY(self_relative_y - self_node.y());
-    //   _vec3_1.setZ(self_relative_z - self_node.z());
-    //
-    //   _vec3_2.setX(other_relative_x - other_node.x());
-    //   _vec3_2.setY(other_relative_y - other_node.y());
-    //   _vec3_2.setZ(other_relative_z - other_node.z());
-    // } else {
-
-    // }
-
-
-
 
     cached_distance = distance;
   }, 10);
