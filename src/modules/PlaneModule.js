@@ -10,9 +10,9 @@ export class PlaneModule extends PhysicsModule {
     this.updateData((geometry, {data}) => {
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-      data.normal = geometry.faces[0].normal.clone();
+      data.width = data.width || geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.normal = data.normal || geometry.faces[0].normal.clone();
     });
   }
 }

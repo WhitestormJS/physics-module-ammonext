@@ -41,7 +41,7 @@ export class SoftbodyModule extends PhysicsModule {
     });
   }
 
-  appendAnchor(object, node, influence, collisionBetweenLinkedBodies = true) {
+  appendAnchor(object, node, influence = 1, collisionBetweenLinkedBodies = true) {
     const o1 = this.data.id;
     const o2 = object.use('physics').data.id;
 

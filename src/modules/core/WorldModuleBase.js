@@ -29,7 +29,7 @@ export default class WorldModuleBase extends Eventable {
     rateLimit: true,
     ammo: "",
     softbody: false,
-    gravity: new Vector3(0, -100, 0)
+    gravity: new Vector3(0, 100, 0)
   };
 
   constructor(options) {
@@ -426,10 +426,10 @@ export default class WorldModuleBase extends Eventable {
         for (let j = 0; j < collisions[id1].length; j++) {
           const id2 = collisions[id1][j];
           const object2 = this.objects[id2];
-          const component2 = object2.component;
-          const data2 = component2.use('physics').data;
 
           if (object2) {
+            const component2 = object2.component;
+            const data2 = component2.use('physics').data;
             // If object was not already touching object2, notify object
             if (data.touches.indexOf(id2) === -1) {
               data.touches.push(id2);
@@ -649,6 +649,7 @@ export default class WorldModuleBase extends Eventable {
   }
 
   manager(manager) {
+    manager.define('physics');
     manager.set('physicsWorker', this.worker);
   }
 
@@ -743,6 +744,7 @@ export default class WorldModuleBase extends Eventable {
 
       self.simulateLoop.start(this);
 
+      console.log(self.options.gravity);
       this.setGravity(self.options.gravity);
     });
   }

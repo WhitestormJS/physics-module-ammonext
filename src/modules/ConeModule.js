@@ -10,8 +10,8 @@ export class ConeModule extends PhysicsModule {
     this.updateData((geometry, {data}) => {
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.radius = (geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.radius = data.radius || (geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
     });
   }
 }

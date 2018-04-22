@@ -1,8 +1,9 @@
 {
   "name": "physics-module-ammonext",
-  "version": "0.1.2",
+  "version": "0.1.2-fix.1",
   "description": "physics module for Whitestorm.js",
   "main": "build/physics-module.js",
+  "modules": "build/physics-module.module.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build-native-ammo && rollup -c -w -m inline",

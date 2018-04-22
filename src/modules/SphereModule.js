@@ -9,7 +9,7 @@ export class SphereModule extends PhysicsModule {
 
     this.updateData((geometry, {data}) => {
       if (!geometry.boundingSphere) geometry.computeBoundingSphere();
-      data.radius = geometry.boundingSphere.radius;
+      data.radius = data.radius || geometry.boundingSphere.radius;
     });
   }
 }

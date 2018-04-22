@@ -6,6 +6,7 @@ import replace from 'rollup-plugin-replace';
 import serve from 'rollup-plugin-serve';
 // import bundleWorker from 'rollup-plugin-bundle-worker';
 import bundleWorker from './bundle-worker/index';
+import {argv} from 'yargs';
 
 let served = false;
 
@@ -73,13 +74,13 @@ const entryToConfig = (input, dest, native = false) => ({
     {
       format: 'umd',
       file: `build/${dest}.js`,
-      sourcemap: true,
+      sourcemap: !argv.test,
       sourcemapFile: `build/${dest}.js.map`
     },
     {
       format: 'es',
       file: `build/${dest}.module.js`,
-      sourcemap: true,
+      sourcemap: !argv.test,
       sourcemapFile: `build/${dest}.module.js.map`
     }
   ]
@@ -87,5 +88,5 @@ const entryToConfig = (input, dest, native = false) => ({
 
 export default [
   entryToConfig('./src/index', 'physics-module'),
-  entryToConfig('./src/native', 'physics-module.native', true)
+  ...(argv.test ? [] : [entryToConfig('./src/native', 'physics-module.native', true)])
 ];

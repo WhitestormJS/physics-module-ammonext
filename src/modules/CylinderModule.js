@@ -10,9 +10,9 @@ export class CylinderModule extends PhysicsModule {
     this.updateData((geometry, {data}) => {
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-      data.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
+      data.width = data.width || geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.depth = data.depth || geometry.boundingBox.max.z - geometry.boundingBox.min.z;
     });
   }
 }

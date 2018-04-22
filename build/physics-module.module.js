@@ -1,4 +1,4 @@
-/* Physics module AmmoNext v0.1.2 */
+/* Physics module AmmoNext v0.1.2-fix.1 */
 import { BoxGeometry, BufferAttribute, BufferGeometry, Euler, Matrix4, Mesh, MeshNormalMaterial, Object3D, Quaternion, SphereGeometry, Vector2, Vector3 as Vector3$1 } from 'three';
 import { Loop } from 'whs';
 
@@ -2024,6 +2024,181 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
     _objects[description.obj].appendAnchor(description.node, _objects[description.obj2], description.collisionBetweenLinkedBodies, description.influence);
   };
 
+  public_functions.linkNodes = function (description) {
+    var self_body = _objects[description.self];
+    var other_body = _objects[description.body];
+
+    var self_node = self_body.get_m_nodes().at(description.n1);
+    var other_node = other_body.get_m_nodes().at(description.n2);
+
+    var self_vec = self_node.get_m_x();
+    var other_vec = other_node.get_m_x();
+
+    var force_x = other_vec.x() - self_vec.x();
+    var force_y = other_vec.y() - self_vec.y();
+    var force_z = other_vec.z() - self_vec.z();
+
+    // var modifier = 30;
+
+    var cached_distance = void 0,
+        linked = false;
+
+    var _loop = setInterval(function () {
+      force_x = other_vec.x() - self_vec.x();
+      force_y = other_vec.y() - self_vec.y();
+      force_z = other_vec.z() - self_vec.z();
+
+      var distance = Math.sqrt(force_x * force_x + force_y * force_y + force_z * force_z);
+
+      if (cached_distance && !linked && cached_distance < distance) {
+        // cached_distance && !linked && cached_distance < distance
+
+        linked = true;
+
+        // let self_vel = self_node.get_m_v();
+        //
+        // _vec3_1.setX(-self_vel.x());
+        // _vec3_1.setY(-self_vel.y());
+        // _vec3_1.setZ(-self_vel.z());
+        //
+        // let other_vel = other_node.get_m_v();
+        //
+        // _vec3_2.setX(-other_vel.x());
+        // _vec3_2.setY(-other_vel.y());
+        // _vec3_2.setZ(-other_vel.z());
+
+        console.log('link!');
+
+        _vec3_1.setX(0);
+        _vec3_1.setY(0);
+        _vec3_1.setZ(0);
+
+        self_body.setVelocity(_vec3_1);
+
+        other_body.setVelocity(_vec3_1);
+
+        // self_body.addVelocity(_vec3_1);
+        // other_body.addVelocity(_vec3_2);
+
+        // self_relative_x = self_node.x();
+        // self_relative_y = self_node.y();
+        // self_relative_z = self_node.z();
+        //
+        // other_relative_x = other_node.x();
+        // other_relative_y = other_node.y();
+        // other_relative_z = other_node.z();
+
+        // self_relative = new Ammo.btVector3();
+        // self_relative.setX();
+
+        // console.log('link!');
+        // self_body.appendAnchor(description.n1, connector, true, 0.5);
+        // other_body.appendAnchor(description.n2, connector, true, 0.5);
+        // clearInterval(_loop);
+
+        // _vec3_1.setX(0);
+        // _vec3_1.setY(0);
+        // _vec3_1.setZ(0);
+
+        // self_body.setVelocity(_vec3_1);
+        // other_body.setVelocity(_vec3_1);
+
+        // other_body.addForce(
+        //   _vec3_2,
+        //   description.n2
+        // );
+
+        // description.modifier *= 1.6;
+      }
+
+      var modifer2 = linked ? 40 : 1;
+
+      force_x *= Math.max(distance, 1) * description.modifier * modifer2;
+      force_y *= Math.max(distance, 1) * description.modifier * modifer2;
+      force_z *= Math.max(distance, 1) * description.modifier * modifer2;
+
+      _vec3_1.setX(force_x);
+      _vec3_1.setY(force_y);
+      _vec3_1.setZ(force_z);
+
+      _vec3_2.setX(-force_x);
+      _vec3_2.setY(-force_y);
+      _vec3_2.setZ(-force_z);
+
+      self_body.addVelocity(_vec3_1, description.n1);
+
+      other_body.addVelocity(_vec3_2, description.n2);
+
+      // } else {
+      //   // self_relative_x = null;
+      // }
+
+
+      // if (self_relative_x) {
+      //   _vec3_1.setX(self_relative_x - self_node.x());
+      //   _vec3_1.setY(self_relative_y - self_node.y());
+      //   _vec3_1.setZ(self_relative_z - self_node.z());
+      //
+      //   _vec3_2.setX(other_relative_x - other_node.x());
+      //   _vec3_2.setY(other_relative_y - other_node.y());
+      //   _vec3_2.setZ(other_relative_z - other_node.z());
+      // } else {
+
+      // }
+
+
+      cached_distance = distance;
+    }, 10);
+  };
+
+  public_functions.appendLink = function (description) {
+    // console.log(Ammo);
+    // console.log(new Ammo.Material());
+
+    // var _mat = new Ammo.Material();
+    //
+    // _mat.set_m_kAST(0);
+    // _mat.set_m_kLST(0);
+    // _mat.set_m_kVST(0);
+    //
+    // _objects[description.self].appendLink(
+    //   description.n1,
+    //   description.n2,
+    //   _mat,
+    //   false
+    // );
+
+    _vec3_1.setX(1000);
+    _vec3_1.setY(0);
+    _vec3_1.setZ(0);
+
+    _objects[description.self].addForce(_vec3_1, description.n1);
+  };
+
+  public_functions.appendLinearJoint = function (description) {
+    // console.log('Ammo', Ammo);
+    var specs = new Ammo.Specs();
+    var _pos = description.specs.position;
+
+    specs.set_position(new Ammo.btVector3(_pos[0], _pos[1], _pos[2]));
+    if (description.specs.erp) specs.set_erp(description.specs.erp);
+    if (description.specs.cfm) specs.set_cfm(description.specs.cfm);
+    if (description.specs.split) specs.set_split(description.specs.split);
+
+    // console.log(specs);
+    //
+    // // ljoint.set_m_rpos(
+    // //   new Ammo.btVector3(_pos1[0], _pos1[1], _pos1[2]),
+    // //   new Ammo.btVector3(_pos2[0], _pos2[1], _pos2[2])
+    // // );
+    //
+    // // console.log('ljoint', ljoint);
+    //
+
+    // console.log('body', _objects[description.body]);
+    _objects[description.self].appendLinearJoint(specs, _objects[description.body]);
+  };
+
   public_functions.addObject = function (description) {
     var body = void 0,
         motionState = void 0;
@@ -2050,7 +2225,9 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
       if (description.kast) body.get_m_materials().at(0).set_m_kAST(description.kast);
       if (description.kvst) body.get_m_materials().at(0).set_m_kVST(description.kvst);
 
-      Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(description.margin ? description.margin : 0.1);
+      Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(typeof description.margin !== 'undefined' ? description.margin : 0.1);
+
+      // Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(0);
 
       // Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setLocalScaling(_vec3_1);
       body.setActivationState(description.state || 4);
@@ -2060,23 +2237,21 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
 
       _transform.setIdentity();
 
-      _vec3_1.setX(description.position.x);
-      _vec3_1.setY(description.position.y);
-      _vec3_1.setZ(description.position.z);
-      _transform.setOrigin(_vec3_1);
-
+      // @test
       _quat.setX(description.rotation.x);
       _quat.setY(description.rotation.y);
       _quat.setZ(description.rotation.z);
       _quat.setW(description.rotation.w);
-      _transform.setRotation(_quat);
+      body.rotate(_quat);
 
-      body.transform(_transform);
+      _vec3_1.setX(description.position.x);
+      _vec3_1.setY(description.position.y);
+      _vec3_1.setZ(description.position.z);
+      body.translate(_vec3_1);
 
       _vec3_1.setX(description.scale.x);
       _vec3_1.setY(description.scale.y);
       _vec3_1.setZ(description.scale.z);
-
       body.scale(_vec3_1);
 
       body.setTotalMass(description.mass, false);
@@ -2125,7 +2300,7 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
       _vec3_1.setZ(description.scale.z);
 
       shape.setLocalScaling(_vec3_1);
-      shape.setMargin(description.margin ? description.margin : 0);
+      shape.setMargin(typeof description.margin !== 'undefined' ? description.margin : 0);
 
       _vec3_1.setX(0);
       _vec3_1.setY(0);
@@ -2643,7 +2818,7 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
 
   public_functions.constraint_setBreakingImpulseThreshold = function (details) {
     var constraint = _constraints[details.id];
-    if (constraint !== undefind) constraint.setBreakingImpulseThreshold(details.threshold);
+    if (constraint !== undefined) constraint.setBreakingImpulseThreshold(details.threshold);
   };
 
   public_functions.simulate = function () {
@@ -2964,9 +3139,9 @@ var PhysicsWorker = new shimWorker("../worker.js", function (window, document) {
               softreport[_off + 1] = _vert.y();
               softreport[_off + 2] = _vert.z();
 
-              softreport[_off + 3] = normal.x();
-              softreport[_off + 4] = normal.y();
-              softreport[_off + 5] = normal.z();
+              softreport[_off + 3] = -normal.x();
+              softreport[_off + 4] = -normal.y();
+              softreport[_off + 5] = -normal.z();
             }
 
             offset += _size * 6 + 2;
@@ -3636,9 +3811,9 @@ var BoxModule = function (_PhysicsModule) {
 
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-      data.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
+      data.width = data.width || geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.depth = data.depth || geometry.boundingBox.max.z - geometry.boundingBox.min.z;
     });
     return _this;
   }
@@ -3674,9 +3849,9 @@ var CapsuleModule = function (_PhysicsModule) {
 
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-      data.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
+      data.width = data.width || geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.depth = data.depth || geometry.boundingBox.max.z - geometry.boundingBox.min.z;
     });
     return _this;
   }
@@ -3756,8 +3931,8 @@ var ConeModule = function (_PhysicsModule) {
 
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.radius = (geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.radius = data.radius || (geometry.boundingBox.max.x - geometry.boundingBox.min.x) / 2;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
     });
     return _this;
   }
@@ -3804,9 +3979,9 @@ var CylinderModule = function (_PhysicsModule) {
 
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-      data.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z;
+      data.width = data.width || geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.depth = data.depth || geometry.boundingBox.max.z - geometry.boundingBox.min.z;
     });
     return _this;
   }
@@ -3883,9 +4058,9 @@ var PlaneModule = function (_PhysicsModule) {
 
       if (!geometry.boundingBox) geometry.computeBoundingBox();
 
-      data.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
-      data.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y;
-      data.normal = geometry.faces[0].normal.clone();
+      data.width = data.width || geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+      data.height = data.height || geometry.boundingBox.max.y - geometry.boundingBox.min.y;
+      data.normal = data.normal || geometry.faces[0].normal.clone();
     });
     return _this;
   }
@@ -3907,7 +4082,7 @@ var SphereModule = function (_PhysicsModule) {
       var data = _ref.data;
 
       if (!geometry.boundingSphere) geometry.computeBoundingSphere();
-      data.radius = geometry.boundingSphere.radius;
+      data.radius = data.radius || geometry.boundingSphere.radius;
     });
     return _this;
   }
@@ -3950,7 +4125,8 @@ var SoftbodyModule = function (_PhysicsModule) {
 
   createClass(SoftbodyModule, [{
     key: 'appendAnchor',
-    value: function appendAnchor(object, node, influence) {
+    value: function appendAnchor(object, node) {
+      var influence = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
       var collisionBetweenLinkedBodies = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
       var o1 = this.data.id;
@@ -3967,6 +4143,18 @@ var SoftbodyModule = function (_PhysicsModule) {
   }]);
   return SoftbodyModule;
 }(_default);
+
+function arrayMax(array) {
+  if (array.length === 0) return -Infinity;
+
+  var max = array[0];
+
+  for (var i = 1, l = array.length; i < l; ++i) {
+    if (array[i] > max) max = array[i];
+  }
+
+  return max;
+}
 
 var ClothModule = function (_PhysicsModule) {
   inherits(ClothModule, _PhysicsModule);
@@ -3991,21 +4179,41 @@ var ClothModule = function (_PhysicsModule) {
         bufferGeometry.addAttribute('position', new BufferAttribute(new Float32Array(geometry.vertices.length * 3), 3).copyVector3sArray(geometry.vertices));
 
         var faces = geometry.faces,
-            facesLength = faces.length;
+            facesLength = faces.length,
+            uvs = geometry.faceVertexUvs[0];
+
         var normalsArray = new Float32Array(facesLength * 3);
+        // const uvsArray = new Array(geometry.vertices.length * 2);
+        var uvsArray = new Float32Array(facesLength * 2);
+        var faceArray = new Uint32Array(facesLength * 3);
 
         for (var i = 0; i < facesLength; i++) {
           var i3 = i * 3;
           var normal = faces[i].normal || new Vector3();
 
+          faceArray[i3] = faces[i].a;
+          faceArray[i3 + 1] = faces[i].b;
+          faceArray[i3 + 2] = faces[i].c;
+
           normalsArray[i3] = normal.x;
           normalsArray[i3 + 1] = normal.y;
           normalsArray[i3 + 2] = normal.z;
+
+          uvsArray[faces[i].a * 2 + 0] = uvs[i][0].x; // a
+          uvsArray[faces[i].a * 2 + 1] = uvs[i][0].y;
+
+          uvsArray[faces[i].b * 2 + 0] = uvs[i][1].x; // b
+          uvsArray[faces[i].b * 2 + 1] = uvs[i][1].y;
+
+          uvsArray[faces[i].c * 2 + 0] = uvs[i][2].x; // c
+          uvsArray[faces[i].c * 2 + 1] = uvs[i][2].y;
         }
 
         bufferGeometry.addAttribute('normal', new BufferAttribute(normalsArray, 3));
 
-        bufferGeometry.setIndex(new BufferAttribute(new (facesLength * 3 > 65535 ? Uint32Array : Uint16Array)(facesLength * 3), 1).copyIndicesArray(faces));
+        bufferGeometry.addAttribute('uv', new BufferAttribute(uvsArray, 2));
+
+        bufferGeometry.setIndex(new BufferAttribute(new (arrayMax(faces) * 3 > 65535 ? Uint32Array : Uint16Array)(facesLength * 3), 1).copyIndicesArray(faces));
 
         return bufferGeometry;
       }();
@@ -4046,6 +4254,32 @@ var ClothModule = function (_PhysicsModule) {
         node: node,
         influence: influence,
         collisionBetweenLinkedBodies: collisionBetweenLinkedBodies
+      });
+    }
+  }, {
+    key: 'linkNodes',
+    value: function linkNodes(object, n1, n2, modifier) {
+      var self = this.data.id;
+      var body = object.use('physics').data.id;
+
+      this.execute('linkNodes', {
+        self: self,
+        body: body,
+        n1: n1, // self node
+        n2: n2, // body node
+        modifier: modifier
+      });
+    }
+  }, {
+    key: 'appendLinearJoint',
+    value: function appendLinearJoint(object, specs) {
+      var self = this.data.id;
+      var body = object.use('physics').data.id;
+
+      this.execute('appendLinearJoint', {
+        self: self,
+        body: body,
+        specs: specs
       });
     }
   }]);

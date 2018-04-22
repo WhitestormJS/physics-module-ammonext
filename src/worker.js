@@ -497,6 +497,202 @@ public_functions.appendAnchor = (description) => {
     );
 }
 
+public_functions.linkNodes = (description) => {
+  var self_body = _objects[description.self];
+  var other_body = _objects[description.body];
+
+  var self_node = self_body.get_m_nodes().at(description.n1);
+  var other_node = other_body.get_m_nodes().at(description.n2);
+
+  var self_vec = self_node.get_m_x();
+  var other_vec = other_node.get_m_x();
+
+  var force_x = other_vec.x() - self_vec.x();
+  var force_y = other_vec.y() - self_vec.y();
+  var force_z = other_vec.z() - self_vec.z();
+
+
+  // var modifier = 30;
+
+  let cached_distance, linked = false;
+
+  const _loop = setInterval(() => {
+    force_x = other_vec.x() - self_vec.x();
+    force_y = other_vec.y() - self_vec.y();
+    force_z = other_vec.z() - self_vec.z();
+
+    let distance = Math.sqrt(force_x * force_x + force_y * force_y + force_z * force_z);
+
+    if (cached_distance && !linked && cached_distance < distance) { // cached_distance && !linked && cached_distance < distance
+
+      linked = true;
+
+      // let self_vel = self_node.get_m_v();
+      //
+      // _vec3_1.setX(-self_vel.x());
+      // _vec3_1.setY(-self_vel.y());
+      // _vec3_1.setZ(-self_vel.z());
+      //
+      // let other_vel = other_node.get_m_v();
+      //
+      // _vec3_2.setX(-other_vel.x());
+      // _vec3_2.setY(-other_vel.y());
+      // _vec3_2.setZ(-other_vel.z());
+
+      console.log('link!');
+
+      _vec3_1.setX(0);
+      _vec3_1.setY(0);
+      _vec3_1.setZ(0);
+
+      self_body.setVelocity(
+        _vec3_1
+      );
+
+      other_body.setVelocity(
+        _vec3_1
+      );
+
+
+
+      // self_body.addVelocity(_vec3_1);
+      // other_body.addVelocity(_vec3_2);
+
+      // self_relative_x = self_node.x();
+      // self_relative_y = self_node.y();
+      // self_relative_z = self_node.z();
+      //
+      // other_relative_x = other_node.x();
+      // other_relative_y = other_node.y();
+      // other_relative_z = other_node.z();
+
+      // self_relative = new Ammo.btVector3();
+      // self_relative.setX();
+
+      // console.log('link!');
+      // self_body.appendAnchor(description.n1, connector, true, 0.5);
+      // other_body.appendAnchor(description.n2, connector, true, 0.5);
+      // clearInterval(_loop);
+
+      // _vec3_1.setX(0);
+      // _vec3_1.setY(0);
+      // _vec3_1.setZ(0);
+
+      // self_body.setVelocity(_vec3_1);
+      // other_body.setVelocity(_vec3_1);
+
+      // other_body.addForce(
+      //   _vec3_2,
+      //   description.n2
+      // );
+
+      // description.modifier *= 1.6;
+    }
+
+    const modifer2 = linked ? 40 : 1;
+
+    force_x *= Math.max(distance, 1) * description.modifier * modifer2;
+    force_y *= Math.max(distance, 1) * description.modifier * modifer2;
+    force_z *= Math.max(distance, 1) * description.modifier * modifer2;
+
+    _vec3_1.setX(force_x);
+    _vec3_1.setY(force_y);
+    _vec3_1.setZ(force_z);
+
+    _vec3_2.setX(-force_x);
+    _vec3_2.setY(-force_y);
+    _vec3_2.setZ(-force_z);
+
+    self_body.addVelocity(
+      _vec3_1,
+      description.n1
+    );
+
+    other_body.addVelocity(
+      _vec3_2,
+      description.n2
+    );
+
+    // } else {
+    //   // self_relative_x = null;
+    // }
+
+
+
+    // if (self_relative_x) {
+    //   _vec3_1.setX(self_relative_x - self_node.x());
+    //   _vec3_1.setY(self_relative_y - self_node.y());
+    //   _vec3_1.setZ(self_relative_z - self_node.z());
+    //
+    //   _vec3_2.setX(other_relative_x - other_node.x());
+    //   _vec3_2.setY(other_relative_y - other_node.y());
+    //   _vec3_2.setZ(other_relative_z - other_node.z());
+    // } else {
+
+    // }
+
+
+
+
+    cached_distance = distance;
+  }, 10);
+}
+
+public_functions.appendLink = (description) => {
+  // console.log(Ammo);
+  // console.log(new Ammo.Material());
+
+  // var _mat = new Ammo.Material();
+  //
+  // _mat.set_m_kAST(0);
+  // _mat.set_m_kLST(0);
+  // _mat.set_m_kVST(0);
+  //
+  // _objects[description.self].appendLink(
+  //   description.n1,
+  //   description.n2,
+  //   _mat,
+  //   false
+  // );
+
+  _vec3_1.setX(1000);
+  _vec3_1.setY(0);
+  _vec3_1.setZ(0);
+
+  _objects[description.self].addForce(
+    _vec3_1,
+    description.n1
+  );
+}
+
+public_functions.appendLinearJoint = (description) => {
+  // console.log('Ammo', Ammo);
+  var specs = new Ammo.Specs();
+  var _pos = description.specs.position;
+
+  specs.set_position(new Ammo.btVector3(_pos[0], _pos[1], _pos[2]));
+  if (description.specs.erp) specs.set_erp(description.specs.erp);
+  if (description.specs.cfm) specs.set_cfm(description.specs.cfm);
+  if (description.specs.split) specs.set_split(description.specs.split);
+
+  // console.log(specs);
+  //
+  // // ljoint.set_m_rpos(
+  // //   new Ammo.btVector3(_pos1[0], _pos1[1], _pos1[2]),
+  // //   new Ammo.btVector3(_pos2[0], _pos2[1], _pos2[2])
+  // // );
+  //
+  // // console.log('ljoint', ljoint);
+  //
+
+  // console.log('body', _objects[description.body]);
+  _objects[description.self]
+    .appendLinearJoint(
+      specs,
+      _objects[description.body]
+    );
+}
+
 public_functions.addObject = (description) => {
   let body, motionState;
 
@@ -522,7 +718,11 @@ public_functions.addObject = (description) => {
     if (description.kast) body.get_m_materials().at(0).set_m_kAST(description.kast);
     if (description.kvst) body.get_m_materials().at(0).set_m_kVST(description.kvst);
 
-    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(description.margin ? description.margin : 0.1);
+    Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(
+      typeof description.margin !== 'undefined' ? description.margin : 0.1
+    );
+
+    // Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setMargin(0);
 
     // Ammo.castObject(body, Ammo.btCollisionObject).getCollisionShape().setLocalScaling(_vec3_1);
     body.setActivationState(description.state || 4);
@@ -532,23 +732,21 @@ public_functions.addObject = (description) => {
 
     _transform.setIdentity();
 
-    _vec3_1.setX(description.position.x);
-    _vec3_1.setY(description.position.y);
-    _vec3_1.setZ(description.position.z);
-    _transform.setOrigin(_vec3_1);
-
+    // @test
     _quat.setX(description.rotation.x);
     _quat.setY(description.rotation.y);
     _quat.setZ(description.rotation.z);
     _quat.setW(description.rotation.w);
-    _transform.setRotation(_quat);
+    body.rotate(_quat);
 
-    body.transform(_transform);
+    _vec3_1.setX(description.position.x);
+    _vec3_1.setY(description.position.y);
+    _vec3_1.setZ(description.position.z);
+    body.translate(_vec3_1);
 
     _vec3_1.setX(description.scale.x);
     _vec3_1.setY(description.scale.y);
     _vec3_1.setZ(description.scale.z);
-
     body.scale(_vec3_1);
 
     body.setTotalMass(description.mass, false);
@@ -600,7 +798,9 @@ public_functions.addObject = (description) => {
     _vec3_1.setZ(description.scale.z);
 
     shape.setLocalScaling(_vec3_1);
-    shape.setMargin(description.margin ? description.margin : 0);
+    shape.setMargin(
+      typeof description.margin !== 'undefined' ? description.margin : 0
+    );
 
     _vec3_1.setX(0);
     _vec3_1.setY(0);
@@ -1526,9 +1726,9 @@ const reportWorld_softbodies = () => {
             softreport[off + 1] = vert.y();
             softreport[off + 2] = vert.z();
 
-            softreport[off + 3] = normal.x();
-            softreport[off + 4] = normal.y();
-            softreport[off + 5] = normal.z();
+            softreport[off + 3] = -normal.x();
+            softreport[off + 4] = -normal.y();
+            softreport[off + 5] = -normal.z();
           }
 
           offset += size * 6 + 2;
