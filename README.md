@@ -271,7 +271,7 @@ rope.addTo(app);
 }
 ```
 
-## SodtBody (`SoftModule`, `ClothModule`, `RopeModule`)
+## SoftBody (`SoftModule`, `ClothModule`, `RopeModule`)
 
 ```javascript
 {
