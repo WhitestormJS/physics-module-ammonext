@@ -1,0 +1,17 @@
+var WHS;
+var THREE;
+var Ammo;
+var type;
+var loadAmmoFromBinary;
+var getObjectId;
+var global;
+var exports;
+var module;
+var require;
+var define;
+var process;
+var public_functions;
+var constraint;
+var undefind;
+var VehicleTuning;
+var Vector3;
