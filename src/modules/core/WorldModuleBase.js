@@ -138,10 +138,12 @@ export default class WorldModuleBase extends Eventable {
     while (index--) {
       const offset = 2 + index * REPORT_ITEMSIZE;
       const object = this.objects[info[offset]];
+
+      if (!object) continue;
+
       const component = object.component;
       const data = component.use('physics').data;
 
-      if (object === null) continue;
 
       if (component.__dirtyPosition === false) {
         object.position.set(
@@ -192,7 +194,7 @@ export default class WorldModuleBase extends Eventable {
       const size = info[offset + 1];
       const object = this.objects[info[offset]];
 
-      if (object === null) continue;
+      if (!object) continue;
 
       const data = object.component.use('physics').data;
 
@@ -412,8 +414,6 @@ export default class WorldModuleBase extends Eventable {
       const component = object.component;
       const data = component.use('physics').data;
 
-      if (object === null) continue;
-
       // If object touches anything, ...
       if (collisions[id1]) {
         // Clean up touches array
@@ -620,18 +620,18 @@ export default class WorldModuleBase extends Eventable {
     const object = component.native;
 
     if (object instanceof Vehicle) {
-      this.execute('removeVehicle', {id: object._physijs.id});
+      this.execute('removeVehicle', {id: component.use('physics').data.id});
       while (object.wheels.length) this.remove(object.wheels.pop());
 
       this.remove(object.mesh);
-      this.vehicles[object._physijs.id] = null;
+      delete this.vehicles[component.use('physics').id];
     } else {
       // Mesh.prototype.remove.call(this, object);
 
-      if (object._physijs) {
-        component.manager.remove('module:world');
-        this.objects[object._physijs.id] = null;
-        this.execute('removeObject', {id: object._physijs.id});
+      if (component.use('physics')) {
+        // component.manager.remove('module:world');
+        delete this.objects[component.use('physics').id];
+        this.execute('removeObject', {id: component.use('physics').data.id});
       }
     }
   }
