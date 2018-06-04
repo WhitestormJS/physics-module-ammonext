@@ -618,20 +618,22 @@ export default class WorldModuleBase extends Eventable {
 
   onRemoveCallback(component) {
     const object = component.native;
+    const physics = component.use('physics')
+    const objectID = physics.data.id;
 
     if (object instanceof Vehicle) {
-      this.execute('removeVehicle', {id: component.use('physics').data.id});
+      this.execute('removeVehicle', {id: objectID});
       while (object.wheels.length) this.remove(object.wheels.pop());
 
       this.remove(object.mesh);
-      delete this.vehicles[component.use('physics').id];
+      delete this.vehicles[objectID];
     } else {
       // Mesh.prototype.remove.call(this, object);
 
-      if (component.use('physics')) {
+      if (physics) {
         // component.manager.remove('module:world');
-        delete this.objects[component.use('physics').id];
-        this.execute('removeObject', {id: component.use('physics').data.id});
+        this.execute('removeObject', {id: objectID});
+        delete this.objects[objectID];
       }
     }
   }
