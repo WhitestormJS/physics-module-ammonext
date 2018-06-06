@@ -29,7 +29,7 @@ export default class WorldModuleBase extends Eventable {
     rateLimit: true,
     ammo: "",
     softbody: false,
-    gravity: new Vector3(0, 100, 0)
+    gravity: new Vector3(0, -100, 0)
   };
 
   constructor(options) {

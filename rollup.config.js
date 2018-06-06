@@ -10,20 +10,19 @@ import {argv} from 'yargs';
 
 let served = false;
 
+const globals = {
+  three: 'THREE',
+  whs: 'WHS'
+};
+
 const entryToConfig = (input, dest, native = false) => ({
   input,
-  name: 'PHYSICS',
   banner: `/* Physics module AmmoNext v${require('./package.json').version} */`,
 
   external: [
     'three',
     'whs'
   ],
-
-  globals: {
-    three: 'THREE',
-    whs: 'WHS'
-  },
 
   context: 'window',
   moduleContext: 'window',
@@ -73,15 +72,18 @@ const entryToConfig = (input, dest, native = false) => ({
   output: [
     {
       format: 'umd',
+      name: 'PHYSICS',
       file: `build/${dest}.js`,
       sourcemap: !argv.test,
-      sourcemapFile: `build/${dest}.js.map`
+      sourcemapFile: `build/${dest}.js.map`,
+      globals
     },
     {
       format: 'es',
       file: `build/${dest}.module.js`,
       sourcemap: !argv.test,
-      sourcemapFile: `build/${dest}.module.js.map`
+      sourcemapFile: `build/${dest}.module.js.map`,
+      globals
     }
   ]
 });
