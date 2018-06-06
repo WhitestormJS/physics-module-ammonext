@@ -138,10 +138,12 @@ export default class WorldModuleBase extends Eventable {
     while (index--) {
       const offset = 2 + index * REPORT_ITEMSIZE;
       const object = this.objects[info[offset]];
+
+      if (!object) continue;
+
       const component = object.component;
       const data = component.use('physics').data;
 
-      if (object === null) continue;
 
       if (component.__dirtyPosition === false) {
         object.position.set(
@@ -192,7 +194,7 @@ export default class WorldModuleBase extends Eventable {
       const size = info[offset + 1];
       const object = this.objects[info[offset]];
 
-      if (object === null) continue;
+      if (!object) continue;
 
       const data = object.component.use('physics').data;
 
@@ -412,8 +414,6 @@ export default class WorldModuleBase extends Eventable {
       const component = object.component;
       const data = component.use('physics').data;
 
-      if (object === null) continue;
-
       // If object touches anything, ...
       if (collisions[id1]) {
         // Clean up touches array
@@ -618,20 +618,22 @@ export default class WorldModuleBase extends Eventable {
 
   onRemoveCallback(component) {
     const object = component.native;
+    const physics = component.use('physics')
+    const objectID = physics.data.id;
 
     if (object instanceof Vehicle) {
-      this.execute('removeVehicle', {id: object._physijs.id});
+      this.execute('removeVehicle', {id: objectID});
       while (object.wheels.length) this.remove(object.wheels.pop());
 
       this.remove(object.mesh);
-      this.vehicles[object._physijs.id] = null;
+      delete this.vehicles[objectID];
     } else {
       // Mesh.prototype.remove.call(this, object);
 
-      if (object._physijs) {
-        component.manager.remove('module:world');
-        this.objects[object._physijs.id] = null;
-        this.execute('removeObject', {id: object._physijs.id});
+      if (physics) {
+        // component.manager.remove('module:world');
+        this.execute('removeObject', {id: objectID});
+        delete this.objects[objectID];
       }
     }
   }
